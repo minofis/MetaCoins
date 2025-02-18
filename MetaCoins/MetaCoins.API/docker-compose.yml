@@ -1,0 +1,18 @@
+version: '3.3'
+
+services:
+  postgresDb:
+    container_name: MetaCoinsDb
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: MetaCoinsDb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 12345
+    volumes:
+      - ../../data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      
+volumes:
+  data:
