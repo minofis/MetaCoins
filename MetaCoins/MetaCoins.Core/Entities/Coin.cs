@@ -3,6 +3,7 @@ namespace MetaCoins.Core.Entities
     public class Coin
     {
         public Guid Id { get; set; }
+        public string ImageUrl { get; set; }
         public decimal Value { get; set; }
         
         public Guid WalletId { get; set; }

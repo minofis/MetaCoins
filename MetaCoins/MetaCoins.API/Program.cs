@@ -82,6 +82,8 @@ builder.Services.AddScoped<IWalletsService, WalletsService>();
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
 builder.Services.AddScoped<ICoinsRepository, CoinsRepository>();
 builder.Services.AddScoped<ICoinsService, CoinsService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddHttpClient<IImageService, ImageService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddAutoMapper(typeof(WalletProfile));
 builder.Services.AddAutoMapper(typeof(TransactionProfile));
@@ -128,6 +130,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAll");

@@ -7,15 +7,18 @@ namespace MetaCoins.BLL.Services
     public class CoinsService : ICoinsService
     {
         private readonly ICoinsRepository _coinsRepo;
-        public CoinsService(ICoinsRepository coinsRepo)
+        private readonly IImageService _imageService;
+        public CoinsService(ICoinsRepository coinsRepo, IImageService imageService)
         {
             _coinsRepo = coinsRepo;
+            _imageService = imageService;
         }
         public async Task CreateCoinAsync(Guid walletId)
         {
             var coin = new Coin
             {
                 Id = Guid.NewGuid(),
+                ImageUrl = string.Empty,
                 WalletId = walletId,
                 CreatorId = walletId,
                 CreatedAt = DateTime.Now.ToUniversalTime(),
@@ -31,6 +34,7 @@ namespace MetaCoins.BLL.Services
             await _coinsRepo.CreateCoinOwnerRecordAsync(ownerRecord);
 
             coin.OwnershipRecords.Add(ownerRecord);
+            coin.ImageUrl = await _imageService.GenerateImage();
 
             await _coinsRepo.SaveChangesAsync();
         }
