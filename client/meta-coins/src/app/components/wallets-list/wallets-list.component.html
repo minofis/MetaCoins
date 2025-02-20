@@ -1,0 +1,8 @@
+<h1>Wallets:</h1>
+<ng-container *ngIf = "wallets$ | async as wallets">
+    <div *ngFor = "let wallet of wallets">
+        <div>{{wallet.id}}</div>
+        <div>{{wallet.type}}</div>
+        <div>{{wallet.status}}</div>
+    </div>
+</ng-container>
