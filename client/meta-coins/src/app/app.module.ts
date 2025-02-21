@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { WalletsModule } from './modules/wallets.module';
 import { UserLoginComponent } from './components/user-login/user-login.component';
 import { UsersModule } from './modules/users.module';
+import { CoinsListComponent } from './components/coins-list/coins-list.component';
+import { CoinsModule } from './modules/coins.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,8 @@ import { UsersModule } from './modules/users.module';
     BrowserModule,
     AppRoutingModule,
     WalletsModule,
-    UsersModule
+    UsersModule,
+    CoinsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

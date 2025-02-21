@@ -27,6 +27,9 @@ namespace MetaCoins.BLL.Services
         {
             return await _userManager.Users
                 .Include(u => u.Wallets)
+                    .ThenInclude(w => w.Type)
+                .Include(u => u.Wallets)
+                    .ThenInclude(w => w.Status)
                 .AsNoTracking()
                 .ToListAsync();
         }

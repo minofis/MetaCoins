@@ -14,10 +14,14 @@ export class CoinsService {
 
   public getCoins () : Observable<ICoin[]>
   {
-    return this._httpClient.get<ICoin[]>(this.baseServerUrl)
+    return this._httpClient.get<ICoin[]>(this.baseServerUrl, {
+      withCredentials: true,
+    })
   }
   public getCoin (id: string) : Observable<ICoin>
   {
-    return this._httpClient.get<ICoin>(this.baseServerUrl + id)
+    return this._httpClient.get<ICoin>(this.baseServerUrl + id, {
+      withCredentials: true,
+    })
   }
 }

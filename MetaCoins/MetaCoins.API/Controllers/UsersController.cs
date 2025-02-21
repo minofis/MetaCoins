@@ -1,3 +1,4 @@
+using System.Net;
 using AutoMapper;
 using MetaCoins.API.Dtos.UserDtos;
 using MetaCoins.API.Dtos.WalletDtos;
@@ -86,8 +87,15 @@ namespace MetaCoins.API.Controllers
                 // Login action
                 var token = await _usersService.Login(loginDto.Username, loginDto.Password);
 
+                Response.Cookies.Append("JwtToken", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
+
                 // Return a 200 OK
-                return Ok(token);
+                return Ok("Ok");
             }
             catch (ArgumentException ex)
             {

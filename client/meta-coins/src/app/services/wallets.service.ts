@@ -14,6 +14,8 @@ export class WalletsService {
 
   public getWallets () : Observable<IWallet[]>
   {
-    return this._httpClient.get<IWallet[]>(this.baseServerUrl)
+    return this._httpClient.get<IWallet[]>(this.baseServerUrl, { 
+      withCredentials: true,
+    });
   }
 }
