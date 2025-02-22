@@ -128,6 +128,9 @@ namespace MetaCoins.BLL.Services
         {
             var user =  await _userManager.Users
                 .Include(u => u.Wallets)
+                    .ThenInclude(w => w.Type)
+                .Include(u => u.Wallets)
+                    .ThenInclude(w => w.Status)
                 .FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException($"User with ID {userId} not found.");
 

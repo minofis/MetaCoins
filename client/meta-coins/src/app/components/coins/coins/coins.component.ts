@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { ICoin } from '../../models/coin';
-import { CoinsService } from '../../services/coins.service';
+import { ICoin } from '../../../models/coin';
+import { CoinsService } from '../../../services/coins.service';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-coins-list',
-  templateUrl: './coins-list.component.html',
-  styleUrl: './coins-list.component.scss'
+  selector: 'app-coins',
+  templateUrl: './coins.component.html',
+  styleUrl: './coins.component.scss'
 })
-export class CoinsListComponent {
+export class CoinsComponent {
 
   public coins$?: Observable<ICoin[]>
 

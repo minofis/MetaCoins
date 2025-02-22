@@ -1,0 +1,17 @@
+<button (click)="goBack()">Back</button>
+
+<h1>Coin:</h1>
+<ng-container *ngIf = "coin$ | async as coin">
+        <img src="{{coin.imageUrl}}" alt="" width="100px">
+        <div>
+            Wallet:
+            <a [routerLink]="['/wallets', coin.walletId]">Owner wallet</a>
+        </div>
+        <div>
+            Creator: 
+            <a [routerLink]="['/wallets', coin.creatorId]">Creator wallet</a>
+        </div>
+        <div>Created at: {{coin.createdAt}}</div>
+
+        <a [routerLink]="['/coins', coin.id, 'owner-records']">Get owner records</a>
+</ng-container>

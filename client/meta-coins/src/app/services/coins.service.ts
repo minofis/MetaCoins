@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ICoin } from '../models/coin';
+import { ICoinOwnerRecord } from '../models/coin-owner-record';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,16 @@ export class CoinsService {
       withCredentials: true,
     })
   }
-  public getCoin (id: string) : Observable<ICoin>
+  public getCoin (coinId: string) : Observable<ICoin>
   {
-    return this._httpClient.get<ICoin>(this.baseServerUrl + id, {
+    return this._httpClient.get<ICoin>(this.baseServerUrl + coinId, {
       withCredentials: true,
     })
+  }
+  public getCoinOwnerRecords (coinId: string) : Observable<ICoinOwnerRecord[]>
+  {
+    return this._httpClient.get<ICoinOwnerRecord[]>(this.baseServerUrl + coinId + "/ownership-records", {
+      withCredentials: true,
+    });
   }
 }

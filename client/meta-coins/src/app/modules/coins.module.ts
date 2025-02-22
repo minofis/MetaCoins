@@ -1,21 +1,29 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CoinsListComponent } from '../components/coins-list/coins-list.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CoinsService } from '../services/coins.service';
+import { CoinsComponent } from '../components/coins/coins/coins.component';
+import { CoinOwnerRecordsComponent } from '../components/coins/coin-owner-records/coin-owner-records.component';
+import { CoinComponent } from '../components/coins/coin/coin.component';
+import { RouterModule } from '@angular/router';
 
 
 
 @NgModule({
   declarations: [
-    CoinsListComponent
+    CoinsComponent,
+    CoinComponent,
+    CoinOwnerRecordsComponent,
   ],
   exports: [
-    CoinsListComponent
+    CoinsComponent,
+    CoinComponent,
+    CoinOwnerRecordsComponent,
   ],
   imports: [
-    BrowserModule, HttpClientModule
+    BrowserModule, 
+    HttpClientModule,
+    RouterModule
   ],
   providers: [
     CoinsService

@@ -4,6 +4,7 @@ import { UsersService } from '../../services/users.service';
 import { LoginRequest } from '../../models/login-request';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Token } from '@angular/compiler';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
@@ -18,7 +19,7 @@ export class UserLoginComponent {
     password: new FormControl(''),
   });
 
-  constructor(private _userService: UsersService) {}
+  constructor(private _userService: UsersService, private router: Router) {}
 
   public onLogin(): void
   {
@@ -31,6 +32,7 @@ export class UserLoginComponent {
       (token) => {
         this.jwtToken = token
         console.log(token)
+        this.router.navigate(['/my-wallets'])
       }
     );
   }

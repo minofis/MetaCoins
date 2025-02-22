@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MetaCoins.API.Controllers
 {
-    [Authorize(Policy = "AdminPolicy")]
     [ApiController]
     [Route("meta-coins/[controller]")]
     public class TransactionsController : ControllerBase

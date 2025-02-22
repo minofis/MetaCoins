@@ -1,0 +1,13 @@
+<button (click)="goBack()">Back</button>
+
+<h1>Coin owner records:</h1>
+<ng-container *ngIf = "ownerRecords$ | async as ownerRecords">
+    <div *ngFor = "let ownerRecord of ownerRecords">
+        <div>
+            Wallet:
+            <a [routerLink]="['/wallets', ownerRecord.walletId]">Owner wallet</a>
+        </div>
+        <div>Acquired at: {{ownerRecord.acquiredAt}}</div>
+        <hr>
+    </div>
+</ng-container>

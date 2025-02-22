@@ -93,7 +93,7 @@ namespace MetaCoins.API.Controllers
         }
 
 
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/ownership-records")]
         public async Task<ActionResult<List<CoinOwnerRecord>>> GetCoinOwnershipRecordsById(Guid id)
         {
