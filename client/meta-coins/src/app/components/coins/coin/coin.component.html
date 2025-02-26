@@ -1,4 +1,4 @@
-<button (click)="goBack()">Back</button>
+<button (click)="goBack()">⬅</button>
 
 <h1>Coin:</h1>
 <ng-container *ngIf = "coin$ | async as coin">
@@ -14,4 +14,6 @@
         <div>Created at: {{coin.createdAt}}</div>
 
         <a [routerLink]="['/coins', coin.id, 'owner-records']">Get owner records</a>
+        <br>
+        <a [routerLink]="['/transactions/transfer-coin']" [state] = "{ coinId: coin.id, walletId: coin.walletId }">Send coin</a>
 </ng-container>

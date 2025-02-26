@@ -21,9 +21,10 @@ export class UsersService {
   public onLogin(loginRequest: LoginRequest): Observable<string>
   {
     return this._httpClient.post<string>(this.baseServerUrl + "login", loginRequest, 
-    { 
-      withCredentials: true,
-      responseType: 'text' as 'json'
-    });
+      { 
+        withCredentials: true,
+        responseType: 'text' as 'json'
+      }
+    );
   }
 }

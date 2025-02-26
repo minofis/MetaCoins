@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { WalletsService } from '../../../services/wallets.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IWallet } from '../../../models/wallet';
 
@@ -15,7 +14,7 @@ export class WalletComponent {
   walletId!: string
   wallet$?: Observable<IWallet>
 
-  constructor(private _walletsService: WalletsService, private route: ActivatedRoute, private location: Location) {}
+  constructor(private _walletsService: WalletsService, private route: ActivatedRoute, private router: Router) {}
 
   public ngOnInit(): void
   {
@@ -25,6 +24,6 @@ export class WalletComponent {
 
   goBack()
   {
-    this.location.back();
+    this.router.navigate(['/my-wallets'])
   }
 }

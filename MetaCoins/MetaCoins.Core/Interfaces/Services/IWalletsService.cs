@@ -11,7 +11,7 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<List<Coin>> GetWalletCoinsByIdAsync(Guid walletId);
         Task<List<Transaction>> GetRecivedTransactionsByIdAsync(Guid walletId);
         Task<List<Transaction>> GetSentTransactionsByIdAsync(Guid walletId);
-        Task CreateWalletAsync(Guid userId, string type);
+        Task CreateWalletAsync(Guid walletId, Guid userId);
         Task UpdateWalletStatusByIdAsync(Guid walletId, string status);
     }
 }

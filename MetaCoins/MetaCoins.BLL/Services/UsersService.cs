@@ -1,7 +1,6 @@
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Identity;
 using MetaCoins.Core.Interfaces.Auth;
-using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,21 +13,26 @@ namespace MetaCoins.BLL.Services
         private readonly IJwtProvider _jwtProvider;
         private readonly UserManager<UserEntity> _userManager;
         private readonly RoleManager<RoleEntity> _roleManager;
+        private readonly IWalletsService _walletsService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public UsersService( IJwtProvider jwtProvider, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IHttpContextAccessor httpContextAccessor)
+        public UsersService(
+            IJwtProvider jwtProvider, 
+            UserManager<UserEntity> userManager, 
+            RoleManager<RoleEntity> roleManager, 
+            IHttpContextAccessor httpContextAccessor, 
+            IWalletsService walletsService)
         {
             _jwtProvider = jwtProvider;
             _userManager = userManager;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
+            _walletsService = walletsService;
         }
 
         public async Task<List<UserEntity>> GetAllUsersAsync()
         {
             return await _userManager.Users
-                .Include(u => u.Wallets)
-                    .ThenInclude(w => w.Type)
-                .Include(u => u.Wallets)
+                .Include(u => u.Wallet)
                     .ThenInclude(w => w.Status)
                 .AsNoTracking()
                 .ToListAsync();
@@ -76,11 +80,26 @@ namespace MetaCoins.BLL.Services
                 throw new ArgumentException($"User with email {email} alredy exist");
             }
 
-            var user = new UserEntity()
+            var user = new UserEntity
             {
                 Id = Guid.NewGuid(),
                 UserName = username,
-                Email = email
+                Email = email,
+                WalletId = Guid.NewGuid()
+            };
+
+            // Create a wallet
+            user.Wallet = new Wallet
+            {
+                Id = Guid.NewGuid(),
+                StatusId = 1,
+                UserId = user.Id
+            };
+
+            user.Wallet.Details = new WalletDetails
+            {
+                WalletId = user.Wallet.Id,
+                CreatedAt = DateTime.Now.ToUniversalTime()
             };
 
             var result = await _userManager.CreateAsync(user, password);
@@ -124,20 +143,18 @@ namespace MetaCoins.BLL.Services
             return Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirst("userId")?.Value);
         }
 
-        public async Task<List<Wallet>> GetWalletsByIdAsync(Guid userId)
+        public async Task<Wallet> GetUserWalletByIdAsync(Guid userId)
         {
             var user =  await _userManager.Users
-                .Include(u => u.Wallets)
-                    .ThenInclude(w => w.Type)
-                .Include(u => u.Wallets)
+                .Include(u => u.Wallet)
                     .ThenInclude(w => w.Status)
                 .FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException($"User with ID {userId} not found.");
 
-            var wallets = user.Wallets.ToList()
-                ?? throw new ArgumentException($"Wallets of user with ID {userId} not found.");
+            var wallet = user.Wallet
+                ?? throw new ArgumentException($"Wallet of user with ID {userId} not found.");
 
-            return wallets;
+            return wallet;
         }
     }
 }

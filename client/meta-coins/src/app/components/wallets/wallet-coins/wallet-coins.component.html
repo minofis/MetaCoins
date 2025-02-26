@@ -1,4 +1,5 @@
-<button (click)="goBack()">Back</button>
+<button (click)="goBack()">⬅</button>
+<a [routerLink]="['/coins/create', walletId ]">Create a new coin</a>
 
 <h1>Wallet coins:</h1>
 <ng-container *ngIf = "coins$ | async as coins">
@@ -11,3 +12,4 @@
         <hr>
     </div>
 </ng-container>
+

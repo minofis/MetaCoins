@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ICoin } from '../models/coin';
 import { ICoinOwnerRecord } from '../models/coin-owner-record';
+import { CoinCreateRequest } from '../models/coin-create-request';
 
 @Injectable({
   providedIn: 'root'
@@ -31,4 +32,14 @@ export class CoinsService {
       withCredentials: true,
     });
   }
+
+    public createCoin(coinData: CoinCreateRequest): Observable<string>
+    {
+      return this._httpClient.post<string>(this.baseServerUrl, coinData, 
+        {
+          withCredentials: true,
+          responseType: 'text' as 'json'
+        }
+      );
+    }
 }

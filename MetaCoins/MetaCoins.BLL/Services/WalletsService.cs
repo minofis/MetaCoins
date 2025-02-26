@@ -8,11 +8,9 @@ namespace MetaCoins.BLL.Services
     public class WalletsService : IWalletsService
     {
         private readonly IWalletsRepository _walletsRepo;
-        private readonly IUsersService _usersService;
-        public WalletsService(IWalletsRepository walletsRepo, IUsersService usersService)
+        public WalletsService(IWalletsRepository walletsRepo)
         {
             _walletsRepo = walletsRepo;
-            _usersService = usersService;
         }
 
         public async Task<List<Wallet>> GetAllWalletsAsync()
@@ -53,33 +51,12 @@ namespace MetaCoins.BLL.Services
             return walletDetails;
         }
 
-        public async Task CreateWalletAsync(Guid userId, string type)
+        public async Task CreateWalletAsync(Guid walletId, Guid userId)
         {
-            // Get wallets by user id
-            var wallets = await _usersService.GetWalletsByIdAsync(userId);
-
-            // Check if wallet with this type already exist
-            if (wallets != null && wallets.Any(a => a.Type.Name == type && a.Status.Name != "Closed"))
-            {
-                throw new ArgumentException($"Wallet with type {type} already exists");
-            }
-
-            int typeId;
-            try
-            {
-                // Get wallet type id by name
-                typeId = await _walletsRepo.GetWalletTypeId(type);
-            }
-            catch
-            {
-                throw new ArgumentException($"Wallet type with name {type} not found.");
-            }
-
             // Create a wallet
             var wallet = new Wallet
             {
-                Id = Guid.NewGuid(),
-                TypeId = typeId,
+                Id = walletId,
                 StatusId = 1,
                 UserId = userId
             };

@@ -14,9 +14,6 @@ namespace MetaCoins.Core.Entities
         public int StatusId { get; set; } 
         public WalletStatus Status { get; set; }
 
-        public int TypeId { get; set; }
-        public WalletType Type { get; set; }
-
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
 

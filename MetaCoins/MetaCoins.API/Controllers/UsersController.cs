@@ -61,17 +61,17 @@ namespace MetaCoins.API.Controllers
             };
         }
 
-        [HttpGet("{id}/wallets")]
-        public async Task<ActionResult<List<WalletResponseDto>>> GetWalletsByUserId(Guid id)
+        [HttpGet("{id}/wallet")]
+        public async Task<ActionResult<List<WalletResponseDto>>> GetUserWalletById(Guid id)
         {
-            // Get all wallets
-            var wallets = await _usersService.GetWalletsByIdAsync(id);
+            // Get a wallet
+            var wallet = await _usersService.GetUserWalletByIdAsync(id);
 
-            // Map the wallets to a list of response DTOs
-            var walletResponseDtos = _mapper.Map<List<WalletResponseDto>>(wallets);
+            // Map the wallet to a response DTO
+            var walletResponseDto = _mapper.Map<WalletResponseDto>(wallet);
 
-            // Return a 200 Ok response with the list of wallets
-            return Ok(walletResponseDtos);
+            // Return a 200 Ok response with the wallet
+            return Ok(walletResponseDto);
         }
 
         [HttpPost("login")]

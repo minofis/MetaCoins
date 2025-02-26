@@ -7,7 +7,7 @@ namespace MetaCoins.Core.Interfaces.Services
     {
         Task<List<UserEntity>> GetAllUsersAsync();
         Task<UserEntity> GetUserByIdAsync(Guid userId);
-        Task<List<Wallet>> GetWalletsByIdAsync(Guid userId);
+        Task<Wallet> GetUserWalletByIdAsync(Guid userId);
         Task<Guid> GetCurrentUserIdAsync();
         Task Register(string username, string email, string password);
         Task<string> Login(string username, string password);

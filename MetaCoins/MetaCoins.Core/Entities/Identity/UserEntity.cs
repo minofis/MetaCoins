@@ -4,6 +4,7 @@ namespace MetaCoins.Core.Entities.Identity
 {
     public class UserEntity : IdentityUser<Guid>
     {
-        public List<Wallet> Wallets { get; set; }
+        public Guid WalletId { get; set; }
+        public Wallet Wallet { get; set; }
     }
 }

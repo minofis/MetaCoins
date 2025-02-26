@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { WalletsService } from '../../../services/wallets.service';
 import { ICoin } from '../../../models/coin';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-wallet-coins',
@@ -15,7 +15,7 @@ export class WalletCoinsComponent {
   walletId!: string;
   public coins$?: Observable<ICoin[]>;
 
-  constructor(private _walletsService: WalletsService, private route: ActivatedRoute, private location: Location) {}
+  constructor(private _walletsService: WalletsService, private route: ActivatedRoute, private router: Router) {}
 
   public ngOnInit(): void
   {
@@ -25,6 +25,6 @@ export class WalletCoinsComponent {
 
   goBack()
   {
-    this.location.back();
+    this.router.navigate(['/wallets', this.walletId])
   }
 }

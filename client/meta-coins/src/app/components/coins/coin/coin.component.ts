@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ICoin } from '../../../models/coin';
 import { CoinsService } from '../../../services/coins.service';
@@ -15,7 +15,7 @@ export class CoinComponent {
   coinId!: string
   coin$?: Observable<ICoin>
 
-  constructor(private _coinsService: CoinsService, private route: ActivatedRoute, private location: Location) {}
+  constructor(private _coinsService: CoinsService, private route: ActivatedRoute, private router: Router) {}
 
   public ngOnInit(): void
   {
@@ -25,7 +25,11 @@ export class CoinComponent {
 
   goBack()
   {
-    this.location.back();
+    this.coin$?.subscribe(
+      coin => {
+        this.router.navigate(['/wallets', coin.walletId, "coins"])
+      }
+    )
   }
 }
 

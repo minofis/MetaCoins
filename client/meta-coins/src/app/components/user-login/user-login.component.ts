@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 import { UsersService } from '../../services/users.service';
 import { LoginRequest } from '../../models/login-request';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Token } from '@angular/compiler';
 import { Router } from '@angular/router';
 
 @Component({

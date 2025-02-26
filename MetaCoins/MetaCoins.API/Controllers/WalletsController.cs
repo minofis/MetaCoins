@@ -49,14 +49,14 @@ namespace MetaCoins.API.Controllers
             }
             try
             {
-                // Get all wallets 
-                var wallets = await _usersService.GetWalletsByIdAsync(userId);
+                // Get user wallet
+                var wallet = await _usersService.GetUserWalletByIdAsync(userId);
 
-                // Map the wallets to a list of response DTOs
-                var walletResponseDtos = _mapper.Map<List<WalletResponseDto>>(wallets);
+                // Map the wallet to a response DTO
+                var walletResponseDto = _mapper.Map<WalletResponseDto>(wallet);
 
-                // Return a 200 Ok response with the list of wallets
-                return Ok(walletResponseDtos);
+                // Return a 200 Ok response with the wallet
+                return Ok(walletResponseDto);
             }
             catch (ArgumentException ex)
             {
@@ -236,43 +236,6 @@ namespace MetaCoins.API.Controllers
             {
                 // Return a 404 Not Found response with the error message
                 return NotFound(ex.Message);
-            }
-            catch(Exception ex)
-            {
-                // Return a 500 Internal Server Error with the error message
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            };
-        }
-
-        [Authorize(Policy = "CustomerPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody]WalletCreateRequestDto walletDto)
-        {
-            // Get user id from the current user
-            var userId = await _usersService.GetCurrentUserIdAsync();
-
-            // Check if userId is null
-            if (userId == null)
-            {
-                return Unauthorized("User isn't authenticated");
-            }
-            // Validate the incomming request
-            if (walletDto == null)
-            {
-                return BadRequest("Wallet data is required");
-            }
-            try
-            {
-                // Create a new wallet
-                await _walletsService.CreateWalletAsync(userId, walletDto.Type);
-
-                // Return a 201 Created response
-                return Created();
-            }
-            catch (ArgumentException ex)
-            {
-                // Return a 404 Not Found response with the error message
-                return BadRequest(ex.Message);
             }
             catch(Exception ex)
             {
