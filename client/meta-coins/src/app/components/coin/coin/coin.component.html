@@ -15,5 +15,5 @@
 
         <a [routerLink]="['owner-records']">Get owner records</a>
         <br>
-        <a [routerLink]="['/transactions/transfer-coin']" [state] = "{ coinId: coin.id, username: coin.ownerUsername }">Send coin</a>
+        <a [routerLink]="['send']" [state] = "{ coinId: coin.id, username: coin.ownerUsername }">Send coin</a>
 </ng-container>

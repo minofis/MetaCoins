@@ -35,11 +35,11 @@ namespace MetaCoins.BLL.Services
             await _transactionsRepo.CreateTransactionAsync(transaction);
         }
 
-        public async Task TransferCoinAsync(Guid senderWalletId, string recipientUsername, Guid coinId)
+        public async Task TransferCoinAsync(string senderUsername, string recipientUsername, Guid coinId)
         {
             // Get recipient and sender wallets
-            var senderWallet = await _walletsRepo.GetWalletByIdAsync(senderWalletId)
-                ?? throw new ArgumentException($"Wallet with ID {senderWalletId} not found.");
+            var senderWallet = await _walletsRepo.GetWalletByUsernameAsync(senderUsername)
+                ?? throw new ArgumentException($"Wallet with username {senderUsername} not found.");
             
             var recipientWallet = await _walletsRepo.GetWalletByUsernameAsync(recipientUsername)
                 ?? throw new ArgumentException($"Wallet with username {recipientUsername} not found.");

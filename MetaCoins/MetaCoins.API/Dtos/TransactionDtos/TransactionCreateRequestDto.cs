@@ -5,7 +5,7 @@ namespace MetaCoins.API.Dtos.TransactionDtos
     public class TransactionCreateRequestDto
     {
         [Required]
-        public Guid SenderWalletId { get; set; }
+        public string SenderUsername { get; set; }
         [Required]
         public string RecipientUsername { get; set; }
         [Required]

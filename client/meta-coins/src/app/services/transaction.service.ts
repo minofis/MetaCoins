@@ -5,26 +5,19 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TransactionsService {
+export class TransactionService {
 
   constructor(private _httpClient: HttpClient){}
 
-/*
   baseServerUrl: string = "http://localhost:5244/meta-coins/transactions/"
 
-  public getTransactions () : Observable<ITransaction[]>
+  public sendCoin(transaction: {senderUsername: string, recipientUsername: string, coinId: string}): Observable<any>
   {
-    return this._httpClient.get<ITransaction[]>(this.baseServerUrl)
-  }
-
-  public sendCoin(transaction: {}): Observable<string>
-  {
-    return this._httpClient.post<string>(this.baseServerUrl + 'transfer-coin', transaction, 
+    return this._httpClient.post<any>(this.baseServerUrl + 'transfer-coin', transaction, 
       {
         withCredentials: true,
         responseType: 'text' as 'json'
       }
     )
   }
-*/
 }

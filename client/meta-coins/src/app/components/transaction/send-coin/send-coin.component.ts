@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { TransactionService } from '../../../services/transaction.service';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { TransactionsService } from '../../../services/transactions.service';
 
 @Component({
   selector: 'app-send-coin',
@@ -11,7 +11,7 @@ import { TransactionsService } from '../../../services/transactions.service';
 export class SendCoinComponent {
 
   coinId!: string;
-  walletId!: string;
+  senderUsername!: string;
 
   response!: string
 
@@ -19,33 +19,28 @@ export class SendCoinComponent {
     recipientUsername: new FormControl(''),
   });
 
-  constructor(private router: Router, private _transactionsService: TransactionsService)
+  constructor(private router: Router, private route: ActivatedRoute, private _transactionService: TransactionService)
   {
-    const navigation = this.router.getCurrentNavigation();
-    
-    if (navigation?.extras.state) {
-      this.coinId = navigation.extras.state['coinId'];
-      this.walletId = navigation.extras.state['walletId'];
-    }
+
+    this.coinId = this.route.snapshot.paramMap.get('id') || '';
+    this.senderUsername = this.route.snapshot.paramMap.get('username') || '';
   }
 
   public onSend(): void
-  {    
+  { 
     const transaction =
     {
+      senderUsername: this.senderUsername,
       recipientUsername: this.sendCoinForm.value.recipientUsername ?? '',
-      senderWalletId: this.walletId,
       coinId: this.coinId
     }
-    /*
-      this._transactionsService.sendCoin(transaction).subscribe(
+    this._transactionService.sendCoin(transaction).subscribe(
         (response) => {
           this.response = response
           console.log(response)
-          this.router.navigate(['/wallets', this.walletId, 'coins'])
+          this.router.navigate([this.senderUsername, 'wallet', 'coins'])
         }
       );
-    */
   }
 
   goBack()
