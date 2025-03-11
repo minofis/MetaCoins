@@ -1,11 +1,11 @@
 <button (click)="goBack()">⬅</button>
 
 <div class="form">
-    <div>Send the coin to the wallet:</div>
+    <div>Send the coin to the user:</div>
     <form [formGroup]="sendCoinForm" (ngSubmit)="onSend()">
         <div>
-            <label for="recipientWalletId">Input recipient wallet id:</label>
-            <input id="recipientWalletId" type="text" formControlName="recipientWalletId">
+            <label for="recipientUsername">Input a recipient username:</label>
+            <input id="recipientUsername" type="text" formControlName="recipientUsername">
         </div>
         <div>
             <button type="submit">Send the coin</button>

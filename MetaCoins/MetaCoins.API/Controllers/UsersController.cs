@@ -22,7 +22,7 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "AdminPolicy")]
         [HttpGet]
-        public async Task<ActionResult<List<UserResponseDto>>> GetAllWallets()
+        public async Task<ActionResult<List<UserResponseDto>>> GetAllUsers()
         {
             // Get all users
             var users = await _usersService.GetAllUsersAsync();

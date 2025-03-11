@@ -134,5 +134,27 @@ namespace MetaCoins.BLL.Services
 
             return coins;
         }
+
+        public async Task<Wallet> GetWalletByUsernameAsync(string username)
+        {
+            // Get wallet by specificated username
+            var wallet = await _walletsRepo.GetWalletByUsernameAsync(username)
+                ?? throw new ArgumentException($"Wallet with username {username} not found.");
+
+            return wallet;
+        }
+
+        public async Task<List<Coin>> GetWalletCoinsByUsernameAsync(string username)
+        {
+            // Get wallet by specificated username
+            var wallet = await _walletsRepo.GetWalletByUsernameAsync(username)
+                ?? throw new ArgumentException($"Wallet with username {username} not found.");
+
+            // Get coins of the wallet
+            var coins = wallet.Coins.ToList()
+                ?? throw new ArgumentException($"Coins of wallet with username {username} not found.");
+
+            return coins;
+        }
     }
 }

@@ -4,4 +4,5 @@ export interface IWallet
     balance: number
     status: string
     type: string
+    ownerUsername: string
 }

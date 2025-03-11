@@ -8,26 +8,30 @@ namespace MetaCoins.BLL.Services
     {
         private readonly ICoinsRepository _coinsRepo;
         private readonly IImageService _imageService;
-        public CoinsService(ICoinsRepository coinsRepo, IImageService imageService)
+        private readonly IWalletsService _walletsService;
+        public CoinsService(ICoinsRepository coinsRepo, IImageService imageService, IWalletsService walletsService)
         {
             _coinsRepo = coinsRepo;
             _imageService = imageService;
+            _walletsService = walletsService;
         }
-        public async Task CreateCoinAsync(Guid walletId)
+        public async Task CreateCoinAsync(string ownerUsername)
         {
+            var wallet = await _walletsService.GetWalletByUsernameAsync(ownerUsername);
+
             var coin = new Coin
             {
                 Id = Guid.NewGuid(),
                 ImageUrl = string.Empty,
-                WalletId = walletId,
-                CreatorId = walletId,
+                WalletId = wallet.Id,
+                CreatorId = wallet.Id,
                 CreatedAt = DateTime.Now.ToUniversalTime(),
             };
             await _coinsRepo.CreateCoinAsync(coin);
 
             var ownerRecord = new CoinOwnerRecord{
                 Id = Guid.NewGuid(),
-                WalletId = walletId,
+                WalletId = wallet.Id,
                 CoinId = coin.Id,
                 AcquiredAt = DateTime.Now.ToUniversalTime()
             };
@@ -59,7 +63,7 @@ namespace MetaCoins.BLL.Services
             var coin = await _coinsRepo.GetCoinByIdAsync(coinId)
                 ?? throw new ArgumentException($"Coin with ID {coinId} not found.");;
 
-            var ownerRecords = coin.OwnershipRecords.ToList()
+            var ownerRecords = coin.OwnershipRecords.OrderBy(o => o.AcquiredAt).ToList()
                 ?? throw new ArgumentException($"There are no any ownership records.");
 
             return ownerRecords;

@@ -7,7 +7,7 @@ namespace MetaCoins.API.Dtos.TransactionDtos
         [Required]
         public Guid SenderWalletId { get; set; }
         [Required]
-        public Guid RecipientWalletId { get; set; }
+        public string RecipientUsername { get; set; }
         [Required]
         public Guid CoinId { get; set; }
     }

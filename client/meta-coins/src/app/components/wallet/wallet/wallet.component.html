@@ -1,0 +1,9 @@
+<button (click)="goBack()">⬅</button>
+<h1>Wallet:</h1>
+<ng-container *ngIf = "wallet$ | async as wallet">
+        <div>Owner: {{wallet.ownerUsername}}</div>
+        <div>Status: {{wallet.status}}</div>
+        <div>Balance: {{wallet.balance}}</div>
+
+        <a [routerLink]="['coins']">Get coins</a>
+</ng-container>

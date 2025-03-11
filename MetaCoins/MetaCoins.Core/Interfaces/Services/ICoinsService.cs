@@ -7,6 +7,6 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<List<Coin>> GetAllCoinsAsync();
         Task<Coin> GetCoinByIdAsync(Guid coinId);
         Task<List<CoinOwnerRecord>> GetCoinOwnershipRecordsByIdAsync(Guid coinId);
-        Task CreateCoinAsync(Guid walletId);
+        Task CreateCoinAsync(string ownerUsername);
     }
 }

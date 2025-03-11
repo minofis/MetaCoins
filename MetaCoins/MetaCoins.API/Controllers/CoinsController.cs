@@ -62,7 +62,7 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpPost]
-        public async Task<IActionResult> CreateCoinByWalletId([FromBody] CoinCreateRequestDto coinDto)
+        public async Task<IActionResult> CreateCoinByUsername([FromBody] CoinCreateRequestDto coinDto)
         {
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
@@ -75,7 +75,7 @@ namespace MetaCoins.API.Controllers
             try
             {
                 // Create a coin
-                await _coinsService.CreateCoinAsync(coinDto.WalletId);
+                await _coinsService.CreateCoinAsync(coinDto.Username);
 
                 // Return a 201 Created response
                 return Created();

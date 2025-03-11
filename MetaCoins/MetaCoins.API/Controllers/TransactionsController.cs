@@ -1,7 +1,6 @@
 using AutoMapper;
 using MetaCoins.API.Dtos.TransactionDtos;
 using MetaCoins.Core.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MetaCoins.API.Controllers
@@ -74,7 +73,7 @@ namespace MetaCoins.API.Controllers
             try
             {
                 // Coins transfer service method
-                await _transactionsService.TransferCoinAsync(transactionDto.SenderWalletId, transactionDto.RecipientWalletId, transactionDto.CoinId);
+                await _transactionsService.TransferCoinAsync(transactionDto.SenderWalletId, transactionDto.RecipientUsername, transactionDto.CoinId);
 
                 // Return a 200 Ok response
                 return Ok("Coin transfer successful.");

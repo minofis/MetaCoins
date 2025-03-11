@@ -139,6 +139,84 @@ namespace MetaCoins.API.Controllers
             };
         }
 
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("by-username/{username}")]
+        public async Task<ActionResult<WalletResponseDto>> GetWalletByUsername(string username)
+        {
+            // Get user id from the current user
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            // Check if userId is null
+            if (userId == null)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                // Get wallet by the specified username
+                var wallet = await _walletsService.GetWalletByUsernameAsync(username);
+
+                // Map the wallet entity to response DTO
+                var walletResponseDto = _mapper.Map<WalletResponseDto>(wallet);
+
+                // Return a 200 Ok response with the wallet
+                return Ok(walletResponseDto);
+            }
+            catch (ArgumentException ex)
+            {
+                // Return a 404 Not Found response with the error message
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                // Return a 500 Internal Server Error with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("by-username/{username}/coins")]
+        public async Task<ActionResult<CoinResponseDto>> GetWalletCoinsByUsername(string username)
+        {
+            // Get user id from the current user
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            // Check if userId is null
+            if (userId == null)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                // Get wallet by the specified username
+                var wallet = await _walletsService.GetWalletByUsernameAsync(username);
+
+                if (wallet.Status.Name == "Closed")
+                {
+                    return Forbid("Bearer");
+                }
+
+                // Get the wallet coins by the specified username
+                var coins = await _walletsService.GetWalletCoinsByUsernameAsync(username);
+
+                // Map the coins to response Dtos
+                var coinDtos = _mapper.Map<List<CoinResponseDto>>(coins);
+
+                // Return a Ok response with the list of coins
+                return Ok(coinDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                // Return a 404 Not Found response with the error message
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                // Return a 500 Internal Server Error with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
         [Authorize(Policy = "AdminPolicy")]
         [HttpPut("{id}/status")]
         public async Task<ActionResult> UpdateWalletStatus(Guid id, string status)

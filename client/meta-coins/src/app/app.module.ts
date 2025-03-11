@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { WalletsModule } from './modules/wallets.module';
-import { UsersModule } from './modules/users.module';
-import { CoinsModule } from './modules/coins.module';
 import { TransactionsModule } from './modules/transactions.module';
+import { AuthModule } from './modules/auth.module';
+import { WalletModule } from './modules/wallet.module';
+import { CoinModule } from './modules/coin.module';
 
 @NgModule({
   declarations: [
@@ -15,9 +14,9 @@ import { TransactionsModule } from './modules/transactions.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    WalletsModule,
-    UsersModule,
-    CoinsModule,
+    WalletModule,
+    AuthModule,
+    CoinModule,
     TransactionsModule
   ],
   providers: [],

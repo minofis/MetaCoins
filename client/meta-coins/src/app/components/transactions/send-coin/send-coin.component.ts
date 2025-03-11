@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { TransactionCreateRequest } from '../../../models/transaction-create-request';
 import { Router } from '@angular/router';
 import { TransactionsService } from '../../../services/transactions.service';
 
@@ -17,7 +16,7 @@ export class SendCoinComponent {
   response!: string
 
   public sendCoinForm = new FormGroup({
-    recipientWalletId: new FormControl(''),
+    recipientUsername: new FormControl(''),
   });
 
   constructor(private router: Router, private _transactionsService: TransactionsService)
@@ -32,19 +31,21 @@ export class SendCoinComponent {
 
   public onSend(): void
   {    
-    const transactionData: TransactionCreateRequest =
+    const transaction =
     {
-      recipientWalletId: this.sendCoinForm.value.recipientWalletId ?? '',
+      recipientUsername: this.sendCoinForm.value.recipientUsername ?? '',
       senderWalletId: this.walletId,
       coinId: this.coinId
     }
-      this._transactionsService.sendCoin(transactionData).subscribe(
+    /*
+      this._transactionsService.sendCoin(transaction).subscribe(
         (response) => {
           this.response = response
           console.log(response)
           this.router.navigate(['/wallets', this.walletId, 'coins'])
         }
       );
+    */
   }
 
   goBack()
