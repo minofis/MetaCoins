@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,8 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+
+  errorMessage!: string
 
   public loginForm = new FormGroup({
     username: new FormControl(''),
@@ -24,11 +27,18 @@ export class LoginComponent {
       username: this.loginForm.value.username ?? '',
       password: this.loginForm.value.password ?? ''
     }
-    this._authService.login(credentials).subscribe(
-      (response) => {
+    this._authService.login(credentials).subscribe({
+      next: (response) => {
         console.log(response)
         this.router.navigate([`/${this.loginForm.value.username}/wallet/`])
+      },
+      error: (error: HttpErrorResponse) => {
+        let errorMessage = 'An error occurred.';
+        if (error.message) {
+          errorMessage = error.message;
+        }
+        this.errorMessage = errorMessage
       }
-    );
+    });
   }
 }

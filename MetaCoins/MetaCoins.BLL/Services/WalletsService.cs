@@ -139,7 +139,7 @@ namespace MetaCoins.BLL.Services
         {
             // Get wallet by specificated username
             var wallet = await _walletsRepo.GetWalletByUsernameAsync(username)
-                ?? throw new ArgumentException($"Wallet with username {username} not found.");
+                ?? throw new ArgumentException($"User with username {username} not found.");
 
             return wallet;
         }

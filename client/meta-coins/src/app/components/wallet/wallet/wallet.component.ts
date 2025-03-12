@@ -21,10 +21,5 @@ export class WalletComponent {
     this.wallet$ = this._walletService.getWallet(this.username)
   }
 
-  constructor(private _walletService: WalletService, private route: ActivatedRoute, private location: Location) {}
-
-  goBack()
-  {
-    this.location.back();
-  }
+  constructor(private _walletService: WalletService, private route: ActivatedRoute) {}
 }

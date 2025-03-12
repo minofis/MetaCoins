@@ -1,8 +1,10 @@
 <button (click)="goBack()">⬅</button>
 
-<a [routerLink]="['/' + username + '/wallet/coins/create']">Create a new coin</a>
-
 <h1>Wallet coins:</h1>
+
+<a [routerLink]="['/' + username + '/wallet/coins/create']">Create a new coin</a>
+<hr>
+
 <ng-container *ngIf = "coins$ | async as coins">
     <div *ngFor = "let coin of coins">
         <img src="{{coin.imageUrl}}" alt="" width="100px">

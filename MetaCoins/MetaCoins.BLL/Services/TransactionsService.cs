@@ -39,10 +39,10 @@ namespace MetaCoins.BLL.Services
         {
             // Get recipient and sender wallets
             var senderWallet = await _walletsRepo.GetWalletByUsernameAsync(senderUsername)
-                ?? throw new ArgumentException($"Wallet with username {senderUsername} not found.");
+                ?? throw new ArgumentException($"User with username '{senderUsername}' not found.");
             
             var recipientWallet = await _walletsRepo.GetWalletByUsernameAsync(recipientUsername)
-                ?? throw new ArgumentException($"Wallet with username {recipientUsername} not found.");
+                ?? throw new ArgumentException($"User with username '{recipientUsername}' not found.");
 
             // Check for the coin of the sender wallet
             var coin = senderWallet.Coins.FirstOrDefault(c => c.Id == coinId)

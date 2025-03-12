@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -9,6 +10,8 @@ import { Router } from '@angular/router';
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
+
+  errorMessage!: string
 
   public registerForm = new FormGroup({
     username: new FormControl(''),
@@ -27,11 +30,18 @@ export class RegisterComponent {
         password: this.registerForm.value.password ?? ''
       }
 
-      this._authService.register(user).subscribe(
-        (response) => {
+      this._authService.register(user).subscribe({
+        next: (response) => {
           console.log(response)
           this.router.navigate(['/login'])
+        },
+        error: (error: HttpErrorResponse) => {
+          let errorMessage = 'An error occurred.';
+          if (error.message) {
+            errorMessage = error.message;
+          }
+          this.errorMessage = errorMessage
         }
-      );
+      });
     }
 }

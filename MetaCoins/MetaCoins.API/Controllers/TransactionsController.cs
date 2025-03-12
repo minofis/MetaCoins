@@ -81,7 +81,7 @@ namespace MetaCoins.API.Controllers
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {

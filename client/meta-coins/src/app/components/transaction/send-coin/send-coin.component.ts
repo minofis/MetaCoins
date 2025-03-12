@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { TransactionService } from '../../../services/transaction.service';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-send-coin',
@@ -13,13 +15,13 @@ export class SendCoinComponent {
   coinId!: string;
   senderUsername!: string;
 
-  response!: string
+  errorMessage!: string
 
   public sendCoinForm = new FormGroup({
     recipientUsername: new FormControl(''),
   });
 
-  constructor(private router: Router, private route: ActivatedRoute, private _transactionService: TransactionService)
+  constructor(private router: Router, private route: ActivatedRoute, private _transactionService: TransactionService, private location: Location)
   {
 
     this.coinId = this.route.snapshot.paramMap.get('id') || '';
@@ -34,17 +36,24 @@ export class SendCoinComponent {
       recipientUsername: this.sendCoinForm.value.recipientUsername ?? '',
       coinId: this.coinId
     }
-    this._transactionService.sendCoin(transaction).subscribe(
-        (response) => {
-          this.response = response
+    this._transactionService.sendCoin(transaction).subscribe({
+        next: (response) => {
           console.log(response)
           this.router.navigate([this.senderUsername, 'wallet', 'coins'])
+        },
+        error: (error: HttpErrorResponse) => {
+          let errorMessage = 'An error occurred.';
+    
+          if (error.message) {
+            errorMessage = error.message;
+          }
+          this.errorMessage = errorMessage
         }
-      );
+  });
   }
 
   goBack()
   {
-    this.router.navigate(['/coins', this.coinId])
+    this.location.back();
   }
 }

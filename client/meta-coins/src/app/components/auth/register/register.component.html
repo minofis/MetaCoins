@@ -18,6 +18,7 @@
         </div>
     </form>
 </div>
+<div *ngIf="errorMessage" style="color: red;">{{errorMessage}}</div>
 
 <span>Do you alredy have an account?</span>
 <a [routerLink]="['/login']">Login</a>
