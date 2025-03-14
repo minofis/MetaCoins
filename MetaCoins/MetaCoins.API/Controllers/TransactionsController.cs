@@ -76,7 +76,7 @@ namespace MetaCoins.API.Controllers
                 await _transactionsService.TransferCoinAsync(transactionDto.SenderUsername, transactionDto.RecipientUsername, transactionDto.CoinId);
 
                 // Return a 200 Ok response
-                return Ok("Coin transfer successful.");
+                return Ok(new {message = "Coin transfer successful."});
             }
             catch (ArgumentException ex)
             {

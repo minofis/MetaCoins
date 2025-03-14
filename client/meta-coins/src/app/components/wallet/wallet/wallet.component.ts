@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
 import { IWallet } from '../../../models/wallet';
 import { WalletService } from '../../../services/wallet.service';

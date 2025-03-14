@@ -95,7 +95,7 @@ namespace MetaCoins.API.Controllers
                 });
 
                 // Return a 200 OK
-                return Ok(new {message = "Ok"});
+                return Ok(new {username = loginDto.Username});
             }
             catch (ArgumentException ex)
             {

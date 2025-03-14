@@ -1,0 +1,27 @@
+<div class="nav-bar">
+    <div class="nav-bar-item">
+        <div>
+            Feed
+        </div>
+    </div>
+    <div class="nav-bar-item">
+        <div>
+            <a [routerLink]="['/' + username + '/wallet/']">My wallet</a>
+        </div>
+    </div>
+    <div class="nav-bar-item">
+        <div>
+            My profile
+        </div>
+    </div>
+    <div class="nav-bar-item">
+        <div>
+            👤 {{username || 'Guest'}}
+        </div>
+    </div>
+    <div class="nav-bar-item">
+        <div>
+            Logout
+        </div>
+    </div>
+</div>

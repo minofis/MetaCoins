@@ -6,10 +6,13 @@ import { AuthModule } from './modules/auth.module';
 import { WalletModule } from './modules/wallet.module';
 import { CoinModule } from './modules/coin.module';
 import { TransactionModule } from './modules/transaction.module';
+import { PagesModule } from './modules/pages.module';
+import { CoreModule } from './modules/core.module';
 
 @NgModule({
   declarations: [
     AppComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -17,7 +20,9 @@ import { TransactionModule } from './modules/transaction.module';
     WalletModule,
     AuthModule,
     CoinModule,
-    TransactionModule
+    TransactionModule,
+    PagesModule,
+    CoreModule
   ],
   providers: [],
   bootstrap: [AppComponent]
