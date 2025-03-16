@@ -5,15 +5,15 @@
         <img src="{{coin.imageUrl}}" alt="" width="100px">
         <div>
             Owner:
-            <a [routerLink]="['/', coin.ownerUsername, 'wallet']">{{coin.ownerUsername}}</a>
+            <a [routerLink]="['/', coin.ownerUsername, 'profile']">{{coin.ownerUsername}}</a>
         </div>
         <div>
             Creator: 
-            <a [routerLink]="['/', coin.creatorUsername, 'wallet']">{{coin.creatorUsername}}</a>
+            <a [routerLink]="['/', coin.creatorUsername, 'profile']">{{coin.creatorUsername}}</a>
         </div>
         <div>Created at: {{coin.createdAt}}</div>
 
         <a [routerLink]="['owner-records']">Get owner records</a>
         <br>
-        <a [routerLink]="['send']" [state] = "{ coinId: coin.id, username: coin.ownerUsername }">Send coin</a>
+        <a *ngIf="isOwner" [routerLink]="['send']" [state] = "{ coinId: coin.id, username: coin.ownerUsername }">Send coin</a>
 </ng-container>

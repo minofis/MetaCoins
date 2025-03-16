@@ -10,8 +10,11 @@ export class AuthService {
 
   baseServerUrl: string = "http://localhost:5244/meta-coins/users/"
 
-  private usernameSubject = new BehaviorSubject<string | null>(null);
+  private usernameSubject = new BehaviorSubject<string | null>(localStorage.getItem('username'));
   public username$ = this.usernameSubject.asObservable();
+
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(!!localStorage.getItem('username'));
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   
   constructor(private _httpClient: HttpClient)
   {
@@ -29,6 +32,7 @@ export class AuthService {
       tap((response: LoginResponse) => {
         if(response?.username){
           this.setUsername(response.username)
+          this.isAuthenticatedSubject.next(true)
         }
       }),
       catchError((error: HttpErrorResponse) => {
@@ -48,10 +52,15 @@ export class AuthService {
       }));
   }
 
+  logout(): void
+  {
+    localStorage.removeItem('username');
+  }
+
   setUsername(username: string): void
   {
-    this.usernameSubject.next(username)
-    localStorage.setItem('username', username)
+    this.usernameSubject.next(username);
+    localStorage.setItem('username', username);
   }
 
   getUsername(): string | null

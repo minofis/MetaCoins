@@ -13,6 +13,13 @@ export class CoinService {
 
   baseServerUrl: string = "http://localhost:5244/meta-coins/coins/"
 
+  getAllCoins () : Observable<ICoin[]>
+  {
+    return this._httpClient.get<ICoin[]>(this.baseServerUrl, {
+      withCredentials: true,
+    })
+  }
+
   getCoin (coinId: string) : Observable<ICoin>
   {
     return this._httpClient.get<ICoin>(this.baseServerUrl + coinId, {

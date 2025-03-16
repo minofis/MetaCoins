@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { ICoin } from '../../../models/coin';
+import { OwnershipService } from '../../../services/ownership.service';
 
 @Component({
   selector: 'app-wallet-coins',
@@ -12,14 +13,16 @@ import { ICoin } from '../../../models/coin';
 })
 export class WalletCoinsComponent {
 
-  username!: string;
+  username?: string;
+  isOwner = false;
   public coins$?: Observable<ICoin[]>;
 
-  constructor(private _walletService: WalletService, private route: ActivatedRoute, private location: Location) {}
+  constructor(private _walletService: WalletService, private route: ActivatedRoute, private location: Location, private ownershipService: OwnershipService) {}
 
   public ngOnInit(): void
   {
     this.username = this.route.snapshot.paramMap.get('username') || '';
+    this.isOwner = this.ownershipService.checkOwnership(this.username);
     this.coins$ = this._walletService.getWalletCoins(this.username);
   }
 

@@ -30,7 +30,7 @@ export class LoginComponent {
     this._authService.login(credentials).subscribe({
       next: (response) => {
         console.log(response)
-        this.router.navigate([`/${this.loginForm.value.username}/wallet/`])
+        this.router.navigate([`/${this.loginForm.value.username}/profile/`])
       },
       error: (error: HttpErrorResponse) => {
         let errorMessage = 'An error occurred.';

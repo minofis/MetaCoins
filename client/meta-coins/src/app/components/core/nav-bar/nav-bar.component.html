@@ -1,17 +1,17 @@
-<div class="nav-bar">
+<div *ngIf="isAuthenticated" class="nav-bar">
     <div class="nav-bar-item">
         <div>
-            Feed
+            <a [routerLink]="['feed']">Feed</a>
         </div>
     </div>
     <div class="nav-bar-item">
         <div>
-            <a [routerLink]="['/' + username + '/wallet/']">My wallet</a>
+            <a [routerLink]="[username + '/wallet/coins']">My coins</a>
         </div>
     </div>
     <div class="nav-bar-item">
         <div>
-            My profile
+            <a [routerLink]="[username + '/profile']">My profile</a>
         </div>
     </div>
     <div class="nav-bar-item">
@@ -21,7 +21,7 @@
     </div>
     <div class="nav-bar-item">
         <div>
-            Logout
+            <button (click)="logout()">Logout</button>
         </div>
     </div>
 </div>

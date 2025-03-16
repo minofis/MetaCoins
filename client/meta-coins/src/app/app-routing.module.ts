@@ -8,11 +8,18 @@ import { WalletCoinsComponent } from './components/wallet/wallet-coins/wallet-co
 import { CreateCoinComponent } from './components/coin/create-coin/create-coin.component';
 import { OwnerRecordsComponent } from './components/coin/owner-records/owner-records.component';
 import { CoinComponent } from './components/coin/coin/coin.component';
+import { FeedComponent } from './components/pages/feed/feed.component';
+import { ProfileComponent } from './components/pages/profile/profile.component';
+import { NotFoundComponent } from './components/pages/not-found/not-found.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "/register", pathMatch: 'full'},
   {path: "login", component: LoginComponent},
   {path: "register", component: RegisterComponent},
+
+  {path: "feed", component: FeedComponent},
+  {path: ":username/profile", component: ProfileComponent},
+  
 
 //  {path: "@:username", component: UserProfileComponent},
 
@@ -23,6 +30,7 @@ const routes: Routes = [
   {path: ":username/wallet/coins/:id", component: CoinComponent},
   {path: ":username/wallet/coins/:id/send", component: SendCoinComponent},
   {path: ":username/wallet/coins/:id/owner-records", component: OwnerRecordsComponent},
+  {path: "**", component: NotFoundComponent},
 ];
 
 @NgModule({

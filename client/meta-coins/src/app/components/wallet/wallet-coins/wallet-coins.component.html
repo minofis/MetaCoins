@@ -1,8 +1,6 @@
-<button (click)="goBack()">⬅</button>
+<h1>{{username}} coins:</h1>
 
-<h1>Wallet coins:</h1>
-
-<a [routerLink]="['/' + username + '/wallet/coins/create']">Create a new coin</a>
+<a *ngIf="isOwner" [routerLink]="['/' + username + '/wallet/coins/create']">Create a new coin</a>
 <hr>
 
 <ng-container *ngIf = "coins$ | async as coins">

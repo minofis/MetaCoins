@@ -1,0 +1,13 @@
+<h1>All coins:</h1>
+
+<hr>
+
+<ng-container *ngIf = "coins$ | async as coins">
+    <div *ngFor = "let coin of coins">
+        <img src="{{coin.imageUrl}}" alt="" width="100px">
+        <div>Owner: {{coin.ownerUsername}}</div>
+        <br>
+        <a [routerLink]="['/' + coin.ownerUsername + '/wallet/coins', coin.id]">Details</a>
+        <hr>
+    </div>
+</ng-container>
