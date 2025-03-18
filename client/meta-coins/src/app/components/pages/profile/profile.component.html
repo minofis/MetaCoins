@@ -1,4 +1,7 @@
-<h1>My profile:</h1>
-<div>
-    Username: {{username}}
-</div>
+<h1>Profile:</h1>
+<ng-container *ngIf = "profile$ | async as profile">
+        <div>Username: {{profile.username}}</div>
+        <div>Description: {{profile.description}}</div>
+</ng-container>
+
+<a [routerLink]="['/', username, 'wallet', 'coins']">Display wallet</a>

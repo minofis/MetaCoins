@@ -6,5 +6,8 @@ namespace MetaCoins.Core.Entities.Identity
     {
         public Guid WalletId { get; set; }
         public Wallet Wallet { get; set; }
+
+        public Guid ProfileId { get; set; }
+        public Profile Profile { get; set; }
     }
 }

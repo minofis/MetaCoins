@@ -1,5 +1,5 @@
-<h1>{{username}} coins:</h1>
-
+<h1>{{username}}'s coins:</h1>
+<hr>
 <a *ngIf="isOwner" [routerLink]="['/' + username + '/wallet/coins/create']">Create a new coin</a>
 <hr>
 
@@ -13,3 +13,5 @@
         <hr>
     </div>
 </ng-container>
+
+<div *ngIf="errorMessage" style="color: red;">{{errorMessage}}</div>

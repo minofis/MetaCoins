@@ -15,9 +15,7 @@ export class CoinService {
 
   getAllCoins () : Observable<ICoin[]>
   {
-    return this._httpClient.get<ICoin[]>(this.baseServerUrl, {
-      withCredentials: true,
-    })
+    return this._httpClient.get<ICoin[]>(this.baseServerUrl, {withCredentials: true,});
   }
 
   getCoin (coinId: string) : Observable<ICoin>

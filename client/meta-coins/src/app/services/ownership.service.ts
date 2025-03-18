@@ -8,14 +8,12 @@ export class OwnershipService {
 
   username?: string | null
 
-  constructor( private authService: AuthService) { }
-
-  ngOnInit()
-  {
+  constructor( private authService: AuthService) 
+  { 
     this.authService.username$.subscribe((username) => {
       this.username = username;
-    })
-  }
+    }
+  )}
 
   checkOwnership(ownerUsername: string): boolean
   {

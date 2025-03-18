@@ -16,14 +16,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(!!localStorage.getItem('username'));
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   
-  constructor(private _httpClient: HttpClient)
-  {
-    const storedUsername = localStorage.getItem('username');
-    if(storedUsername)
-    {
-      this.usernameSubject.next(storedUsername);
-    }
-  }
+  constructor(private _httpClient: HttpClient){}
 
   login(credentials: { username: string, password: string }): Observable<any> 
   {
@@ -59,8 +52,8 @@ export class AuthService {
 
   setUsername(username: string): void
   {
-    this.usernameSubject.next(username);
     localStorage.setItem('username', username);
+    this.usernameSubject.next(username);
   }
 
   getUsername(): string | null

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { IWallet } from '../models/wallet';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ICoin } from '../models/coin';
 
 @Injectable({
@@ -15,17 +15,18 @@ export class WalletService {
 
   getWallet(username: string) : Observable<IWallet>
   {
-    return this._httpClient.get<IWallet>(this.baseServerUrl + 'by-username/' + username, 
-    {
-      withCredentials: true,
-    });
+    return this._httpClient.get<IWallet>(this.baseServerUrl + 'by-username/' + username, {withCredentials: true,});
   }
 
   getWalletCoins (username: string) : Observable<ICoin[]>
   {
-    return this._httpClient.get<ICoin[]>(this.baseServerUrl + 'by-username/' + username + "/coins", 
-    {
-      withCredentials: true,
-    });
+    return this._httpClient.get<ICoin[]>(this.baseServerUrl + 'by-username/' + username + "/coins", {withCredentials: true,})
+    .pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error("Error:", error.error?.message);
+        return throwError(() => new Error(error.error?.message) || 'Something went wrong');
+        }
+      )
+    )
   }
 }

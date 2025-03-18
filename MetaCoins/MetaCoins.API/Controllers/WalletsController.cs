@@ -208,7 +208,7 @@ namespace MetaCoins.API.Controllers
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
@@ -278,7 +278,7 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
-
+/*
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/coins")]
         public async Task<ActionResult<CoinResponseDto>> GetWalletCoinsById(Guid id)
@@ -313,7 +313,7 @@ namespace MetaCoins.API.Controllers
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {error = ex.Message});
             }
             catch(Exception ex)
             {
@@ -321,7 +321,7 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
-
+*/
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/sent-transactions")]
         public async Task<ActionResult<List<Transaction>>> GetSentTransactions(Guid id)

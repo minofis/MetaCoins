@@ -88,11 +88,20 @@ namespace MetaCoins.BLL.Services
                 WalletId = Guid.NewGuid()
             };
 
-            // Create a wallet
+            // Create a new wallet
             user.Wallet = new Wallet
             {
                 Id = Guid.NewGuid(),
                 StatusId = 1,
+                UserId = user.Id
+            };
+
+            // Create a new profile
+            user.Profile = new Profile
+            {
+                Id = Guid.NewGuid(),
+                Username = user.UserName,
+                Description = "",
                 UserId = user.Id
             };
 

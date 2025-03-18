@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../services/auth.service';
+import { ProfileService } from '../../../services/profile.service';
+import { IProfile } from '../../../models/profile';
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -7,14 +10,15 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  username?: string | null
+  username!: string
+  profile$?: Observable<IProfile>
 
-  constructor(private authService: AuthService){}
+  constructor(private profileService: ProfileService, private route: ActivatedRoute){}
 
   ngOnInit(): void
   {
-    this.authService.username$.subscribe((username) => {
-      this.username = username
-    });
+    this.username = this.route.snapshot.paramMap.get('username') || '';
+
+    this.profile$ = this.profileService.getProfile(this.username);
   }
 }

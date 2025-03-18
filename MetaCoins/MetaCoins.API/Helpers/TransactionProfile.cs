@@ -4,7 +4,7 @@ using MetaCoins.Core.Entities;
 
 namespace MetaCoins.API.Helpers
 {
-    public class TransactionProfile : Profile
+    public class TransactionProfile : AutoMapper.Profile
     {
         public TransactionProfile()
         {
