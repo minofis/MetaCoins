@@ -98,6 +98,8 @@ builder.Services.AddScoped<ICoinsService, CoinsService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IProfilesRepository, ProfilesRepository>();
+builder.Services.AddScoped<ILikesRepository, LikesRepository>();
+builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddHttpClient<IImageService, ImageService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddAutoMapper(typeof(WalletProfile));

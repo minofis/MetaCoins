@@ -13,20 +13,17 @@ namespace MetaCoins.BLL.Services
         private readonly IJwtProvider _jwtProvider;
         private readonly UserManager<UserEntity> _userManager;
         private readonly RoleManager<RoleEntity> _roleManager;
-        private readonly IWalletsService _walletsService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public UsersService(
             IJwtProvider jwtProvider, 
             UserManager<UserEntity> userManager, 
             RoleManager<RoleEntity> roleManager, 
-            IHttpContextAccessor httpContextAccessor, 
-            IWalletsService walletsService)
+            IHttpContextAccessor httpContextAccessor)
         {
             _jwtProvider = jwtProvider;
             _userManager = userManager;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
-            _walletsService = walletsService;
         }
 
         public async Task<List<UserEntity>> GetAllUsersAsync()
@@ -40,8 +37,18 @@ namespace MetaCoins.BLL.Services
 
         public async Task<UserEntity> GetUserByIdAsync(Guid userId)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId)
+            return await _userManager.Users
+                .Include(u => u.Likes)
+                .FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException($"User with ID {userId} not found.");
+        }
+
+        public async Task<UserEntity> GetUserByUsernameAsync(string username)
+        {
+            return await _userManager.Users
+                .Include(u => u.Likes)
+                .FirstOrDefaultAsync(u => u.UserName == username)
+                ?? throw new ArgumentException($"User with username {username} not found.");
         }
 
         public async Task<string> Login(string username, string password)
@@ -100,8 +107,7 @@ namespace MetaCoins.BLL.Services
             user.Profile = new Profile
             {
                 Id = Guid.NewGuid(),
-                Username = user.UserName,
-                Description = "",
+                Description = "I like MetaCoins :3",
                 UserId = user.Id
             };
 
@@ -164,6 +170,20 @@ namespace MetaCoins.BLL.Services
                 ?? throw new ArgumentException($"Wallet of user with ID {userId} not found.");
 
             return wallet;
+        }
+
+        public async Task<List<Like>> GetUserLikesByUsernameAsync(string username)
+        {
+            // Get user by username
+            var user = await _userManager.Users
+                .Include(u => u.Likes)
+                .FirstOrDefaultAsync(u => u.UserName == username)
+                ?? throw new ArgumentException($"User with username {username} not found.");
+
+            var likes = user.Likes
+                ?? throw new ArgumentException($"Likes of user with username {username} not found.");
+
+            return likes;
         }
     }
 }

@@ -9,5 +9,7 @@ namespace MetaCoins.Core.Entities.Identity
 
         public Guid ProfileId { get; set; }
         public Profile Profile { get; set; }
+
+        public List<Like> Likes { get; set; }
     }
 }

@@ -1,0 +1,10 @@
+using MetaCoins.Core.Entities;
+
+namespace MetaCoins.Core.Interfaces.Repositories
+{
+    public interface ILikesRepository
+    {
+        Task LikeCoinAsync(Like like);
+        Task UnlikeCoinAsync(Guid userId, Guid coinId);
+    }
+}

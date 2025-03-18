@@ -1,6 +1,4 @@
-using AutoMapper;
 using MetaCoins.API.Dtos.ProfileDtos;
-using MetaCoins.Core.Entities;
 
 namespace MetaCoins.API.Helpers
 {
@@ -8,7 +6,8 @@ namespace MetaCoins.API.Helpers
     {
         public ProfileProfile()
         {
-            CreateMap<Core.Entities.Profile, ProfileResponseDto>();
+            CreateMap<Core.Entities.Profile, ProfileResponseDto>()
+                .ForMember(t => t.Username, o => o.MapFrom(s => s.User.UserName));
         }
     }
 }
