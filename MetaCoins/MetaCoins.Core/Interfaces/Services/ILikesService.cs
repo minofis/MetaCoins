@@ -4,5 +4,6 @@ namespace MetaCoins.Core.Interfaces.Services
     {
         Task LikeCoinAsync(Guid userId, Guid coinId);
         Task UnlikeCoinAsync(Guid userId, Guid coinId);
+        Task<bool> IsCoinLikedAsync(Guid userId, Guid coinId);
     }
 }

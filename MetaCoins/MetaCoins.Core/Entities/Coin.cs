@@ -4,7 +4,7 @@ namespace MetaCoins.Core.Entities
     {
         public Guid Id { get; set; }
         public string ImageUrl { get; set; }
-        public decimal Value { get; set; }
+        public int LikesCount => Likes.Count;
         
         public Guid WalletId { get; set; }
         public Wallet Wallet { get; set; }
@@ -12,7 +12,7 @@ namespace MetaCoins.Core.Entities
         public Guid CreatorId { get; set; }
         public Wallet Creator { get; set; }
 
-        public List<Like> Likes { get; set; }
+        public List<Like> Likes { get; set; } = new();
 
         public ICollection<CoinOwnerRecord> OwnershipRecords { get; set; } = new List<CoinOwnerRecord>();
         public DateTime CreatedAt { get; set; }

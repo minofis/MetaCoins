@@ -15,5 +15,9 @@
 
         <a [routerLink]="['owner-records']">Get owner records</a>
         <br>
+
         <a *ngIf="isOwner" [routerLink]="['send']" [state] = "{ coinId: coin.id, username: coin.ownerUsername }">Send coin</a>
+        <br>
+
+        <app-like [likesCount]="coin.likesCount"></app-like>
 </ng-container>

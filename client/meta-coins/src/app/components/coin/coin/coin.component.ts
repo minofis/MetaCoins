@@ -28,6 +28,7 @@ export class CoinComponent {
     this.username = this.route.snapshot.paramMap.get('username') || '';
 
     this.isOwner = this.ownershipService.checkOwnership(this.username);
+    
     this.coin$ = this._coinService.getCoin(this.coinId);
 
     this.coin$.subscribe(coin => {

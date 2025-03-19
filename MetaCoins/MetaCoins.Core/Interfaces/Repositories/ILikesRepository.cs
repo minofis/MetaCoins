@@ -6,5 +6,6 @@ namespace MetaCoins.Core.Interfaces.Repositories
     {
         Task LikeCoinAsync(Like like);
         Task UnlikeCoinAsync(Guid userId, Guid coinId);
+        Task<bool> IsCoinLikedAsync(Guid userId, Guid coinId);
     }
 }

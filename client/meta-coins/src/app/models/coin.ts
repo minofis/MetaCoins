@@ -2,7 +2,7 @@ export interface ICoin
 {
     id: number
     imageUrl: string
-    value: number
+    likesCount: number
     ownerUsername: string
     creatorUsername: string
     createdAt: string

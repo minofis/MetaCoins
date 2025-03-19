@@ -13,6 +13,7 @@ namespace MetaCoins.BLL.Services
             _likesRepo = likesRepo;
             _usersService = usersService;
         }
+
         public async Task LikeCoinAsync(Guid userId, Guid coinId)
         {
             var user = await _usersService.GetUserByIdAsync(userId);
@@ -43,6 +44,13 @@ namespace MetaCoins.BLL.Services
             }
 
             await _likesRepo.UnlikeCoinAsync(userId, coinId);
+        }
+
+        public async Task<bool> IsCoinLikedAsync(Guid userId, Guid coinId)
+        {
+            var isLiked = await _likesRepo.IsCoinLikedAsync(userId, coinId);
+            
+            return isLiked;
         }
     }
 }

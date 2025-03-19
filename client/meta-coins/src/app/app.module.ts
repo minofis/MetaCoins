@@ -21,7 +21,7 @@ import { CoreModule } from './modules/core.module';
     CoinModule,
     TransactionModule,
     PagesModule,
-    CoreModule
+    CoreModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
