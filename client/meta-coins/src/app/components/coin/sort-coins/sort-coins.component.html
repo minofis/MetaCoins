@@ -1,0 +1,22 @@
+<div class="form">
+    <form [formGroup]="sortCoinsForm" (ngSubmit)="onSubmit()">
+            <label for="sortBy">Sort coins by:</label>
+            <select name="sortBy" id="sortBy" formControlName="sortOption">
+                <option value="" disabled selected>Sort by...</option> 
+                <option value="likes-true">Most popular</option>
+                <option value="likes-false">Least popular</option>
+                <option value="createdAt-true">Newest</option>
+                <option value="createdAt-false">Oldest</option>
+            </select>
+            <button type="submit">Sort</button>
+    </form>
+</div>
+<ng-container *ngIf = "coins$ | async as coins">
+    <div *ngFor = "let coin of coins">
+        <img src="{{coin.imageUrl}}" alt="" width="100px">
+        <div>Owner: {{coin.ownerUsername}}</div>
+        <br>
+        <a [routerLink]="['/' + coin.ownerUsername + '/wallet/coins', coin.id]">Details</a>
+        <hr>
+    </div>
+</ng-container>

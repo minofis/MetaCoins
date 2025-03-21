@@ -69,24 +69,7 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
-/*
-        [Authorize(Policy = "AdminPolicy")]
-        [HttpGet]
-        public async Task<ActionResult<List<WalletResponseDto>>> GetWalletsByFilter(
-            [FromQuery] string? ownerUsername,
-            [FromQuery] string? status,
-            [FromQuery] string? type)
-        {
-                // Get all wallets
-                var wallets = await _walletsService.GetAllWalletsAsync();
 
-                // Map the wallets to a list of response DTOs
-                var walletResponseDtos = _mapper.Map<List<WalletResponseDto>>(wallets);
-
-                // Return a 200 Ok response with the list of wallets
-                return Ok(walletResponseDtos);
-        }
-*/
         [Authorize(Policy = "AdminOrCustomerPolicy")]
         [HttpGet("{id}")]
         public async Task<ActionResult<WalletResponseDto>> GetWalletById(Guid id)
@@ -278,50 +261,7 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
-/*
-        [Authorize(Policy = "CustomerPolicy")]
-        [HttpGet("{id}/coins")]
-        public async Task<ActionResult<CoinResponseDto>> GetWalletCoinsById(Guid id)
-        {
-            // Get user id from the current user
-            var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null)
-            {
-                return Unauthorized("User isn't authenticated");
-            }
-            try
-            {
-                // Get wallet by the specified ID
-                var wallet = await _walletsService.GetWalletByIdAsync(id);
-
-                if (wallet.UserId != userId || wallet.Status.Name == "Closed")
-                {
-                    return Forbid("Bearer");
-                }
-
-                // Get the wallet coins by the specified ID
-                var coins = await _walletsService.GetWalletCoinsByIdAsync(id);
-
-                // Map the coins to response Dtos
-                var coinDtos = _mapper.Map<List<CoinResponseDto>>(coins);
-
-                // Return a Ok response with the list of coins
-                return Ok(coinDtos);
-            }
-            catch (ArgumentException ex)
-            {
-                // Return a 404 Not Found response with the error message
-                return NotFound(new {error = ex.Message});
-            }
-            catch(Exception ex)
-            {
-                // Return a 500 Internal Server Error with the error message
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            };
-        }
-*/
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/sent-transactions")]
         public async Task<ActionResult<List<Transaction>>> GetSentTransactions(Guid id)
@@ -408,4 +348,49 @@ namespace MetaCoins.API.Controllers
             };
         }
     }
+
+/*
+        [Authorize(Policy = "CustomerPolicy")]
+        [HttpGet("{id}/coins")]
+        public async Task<ActionResult<CoinResponseDto>> GetWalletCoinsById(Guid id)
+        {
+            // Get user id from the current user
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            // Check if userId is null
+            if (userId == null)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                // Get wallet by the specified ID
+                var wallet = await _walletsService.GetWalletByIdAsync(id);
+
+                if (wallet.UserId != userId || wallet.Status.Name == "Closed")
+                {
+                    return Forbid("Bearer");
+                }
+
+                // Get the wallet coins by the specified ID
+                var coins = await _walletsService.GetWalletCoinsByIdAsync(id);
+
+                // Map the coins to response Dtos
+                var coinDtos = _mapper.Map<List<CoinResponseDto>>(coins);
+
+                // Return a Ok response with the list of coins
+                return Ok(coinDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                // Return a 404 Not Found response with the error message
+                return NotFound(new {error = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                // Return a 500 Internal Server Error with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+*/
 }

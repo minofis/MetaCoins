@@ -68,5 +68,37 @@ namespace MetaCoins.BLL.Services
 
             return ownerRecords;
         }
+
+        public async Task<List<Coin>> GetCoinsSortedAsync(string sortBy, bool descending)
+        {
+            var coins = await _coinsRepo.GetAllCoinsAsync();
+            
+            if (coins == null || !coins.Any())
+            {
+                return new List<Coin>();
+            }
+
+            IEnumerable<Coin> sortedCoins = coins;
+
+            switch (sortBy.ToLower())
+            {
+                case "likes": 
+                    sortedCoins = descending
+                        ? coins.OrderByDescending(c => c.LikesCount)
+                        : coins.OrderBy(c => c.LikesCount);
+                    break;
+
+                case "createdat": 
+                    sortedCoins = descending
+                        ? coins.OrderByDescending(c => c.CreatedAt)
+                        : coins.OrderBy(c => c.CreatedAt);
+                    break;
+                    
+                default: 
+                    break;
+            }
+
+            return sortedCoins.ToList();
+        }
     }
 }

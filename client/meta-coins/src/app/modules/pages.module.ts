@@ -4,6 +4,7 @@ import { FeedComponent } from '../components/pages/feed/feed.component';
 import { RouterModule } from '@angular/router';
 import { ProfileComponent } from '../components/pages/profile/profile.component';
 import { NotFoundComponent } from '../components/pages/not-found/not-found.component';
+import { CoinModule } from './coin.module';
 
 
 
@@ -20,7 +21,8 @@ import { NotFoundComponent } from '../components/pages/not-found/not-found.compo
   ],
   imports: [
     CommonModule,
-    RouterModule
+    CoinModule,
+    RouterModule,
   ]
 })
 export class PagesModule { }

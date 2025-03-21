@@ -34,8 +34,26 @@ namespace MetaCoins.API.Controllers
             return Ok(coinDtos);
         }
 
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("sort-by")]
+        public async Task<ActionResult<List<CoinResponseDto>>> GetCoinsSorted
+        (
+            [FromQuery] string sortBy = "createdAt", 
+            [FromQuery] bool descending = false
+        )
+        {
+                // Get coins sorted by likes
+                var sortedCoins = await _coinsService.GetCoinsSortedAsync(sortBy, descending);
+
+                // Map the coins to a list of response DTOs
+                var coinResponseDtos = _mapper.Map<List<CoinResponseDto>>(sortedCoins);
+
+                // Return a 200 Ok response with the list of coins
+                return Ok(coinResponseDtos);
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<CoinResponseDto>> GetCoin(Guid id)
+        public async Task<ActionResult<CoinResponseDto>> GetCoinById(Guid id)
         {
             try
             {

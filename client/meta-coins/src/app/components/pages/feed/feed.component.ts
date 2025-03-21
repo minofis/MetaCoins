@@ -9,12 +9,6 @@ import { ICoin } from '../../../models/coin';
   styleUrl: './feed.component.scss'
 })
 export class FeedComponent {
-  public coins$?: Observable<ICoin[]>;
 
-  constructor(private coinService: CoinService) {}
-
-  public ngOnInit(): void
-  {
-    this.coins$ = this.coinService.getAllCoins();
-  }
+  constructor() {}
 }
