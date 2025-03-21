@@ -1,6 +1,8 @@
 using MetaCoins.Core.Entities;
+using MetaCoins.Core.Entities.Helpers;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace MetaCoins.BLL.Services
 {
@@ -43,11 +45,41 @@ namespace MetaCoins.BLL.Services
             await _coinsRepo.SaveChangesAsync();
         }
 
-        public async Task<List<Coin>> GetAllCoinsAsync()
+        public async Task<List<Coin>> GetAllCoinsAsync(QueryObject query)
         {
             var coins = await _coinsRepo.GetAllCoinsAsync();
 
-            return coins;
+            if (coins == null || coins.Count == 0)
+            {
+                return new List<Coin>(); 
+            }
+
+            var queryCoins = coins.AsQueryable();
+
+            if (!string.IsNullOrEmpty(query.SortBy))
+            {
+                switch (query.SortBy.ToLower())
+                {
+                    case "likes": 
+                        queryCoins = query.Descending
+                            ? queryCoins.OrderByDescending(c => c.LikesCount)
+                            : queryCoins.OrderBy(c => c.LikesCount);
+                        break;
+
+                    case "createdat": 
+                        queryCoins = query.Descending
+                            ? queryCoins.OrderByDescending(c => c.CreatedAt)
+                            : queryCoins.OrderBy(c => c.CreatedAt);
+                        break;
+                        
+                    default: 
+                        break;
+                }
+            }
+            
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+
+            return await queryCoins.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Coin> GetCoinByIdAsync(Guid coinId)
@@ -67,38 +99,6 @@ namespace MetaCoins.BLL.Services
                 ?? throw new ArgumentException($"There are no any ownership records.");
 
             return ownerRecords;
-        }
-
-        public async Task<List<Coin>> GetCoinsSortedAsync(string sortBy, bool descending)
-        {
-            var coins = await _coinsRepo.GetAllCoinsAsync();
-            
-            if (coins == null || !coins.Any())
-            {
-                return new List<Coin>();
-            }
-
-            IEnumerable<Coin> sortedCoins = coins;
-
-            switch (sortBy.ToLower())
-            {
-                case "likes": 
-                    sortedCoins = descending
-                        ? coins.OrderByDescending(c => c.LikesCount)
-                        : coins.OrderBy(c => c.LikesCount);
-                    break;
-
-                case "createdat": 
-                    sortedCoins = descending
-                        ? coins.OrderByDescending(c => c.CreatedAt)
-                        : coins.OrderBy(c => c.CreatedAt);
-                    break;
-                    
-                default: 
-                    break;
-            }
-
-            return sortedCoins.ToList();
         }
     }
 }

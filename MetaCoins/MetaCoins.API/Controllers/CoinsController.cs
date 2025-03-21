@@ -1,6 +1,8 @@
 using AutoMapper;
 using MetaCoins.API.Dtos.CoinDtos;
+using MetaCoins.API.Helpers;
 using MetaCoins.Core.Entities;
+using MetaCoins.Core.Entities.Helpers;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,32 +23,15 @@ namespace MetaCoins.API.Controllers
             _coinsService = coinsService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<CoinResponseDto>>> GetAllCoins()
-        {
-            // Get all coins
-            var coins = await _coinsService.GetAllCoinsAsync();
-
-            // Map the coins to a list of response DTOs
-            var coinDtos = _mapper.Map<List<CoinResponseDto>>(coins);
-
-            // Return a 200 Ok response with the list of coins
-            return Ok(coinDtos);
-        }
-
         [Authorize(Policy = "AdminOrCustomerPolicy")]
-        [HttpGet("sort-by")]
-        public async Task<ActionResult<List<CoinResponseDto>>> GetCoinsSorted
-        (
-            [FromQuery] string sortBy = "createdAt", 
-            [FromQuery] bool descending = false
-        )
+        [HttpGet]
+        public async Task<ActionResult<List<CoinResponseDto>>> GetAllCoins([FromQuery] QueryObject query)
         {
-                // Get coins sorted by likes
-                var sortedCoins = await _coinsService.GetCoinsSortedAsync(sortBy, descending);
+                // Get coins by query
+                var coins = await _coinsService.GetAllCoinsAsync(query);
 
                 // Map the coins to a list of response DTOs
-                var coinResponseDtos = _mapper.Map<List<CoinResponseDto>>(sortedCoins);
+                var coinResponseDtos = _mapper.Map<List<CoinResponseDto>>(coins);
 
                 // Return a 200 Ok response with the list of coins
                 return Ok(coinResponseDtos);

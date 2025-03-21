@@ -31,8 +31,6 @@ export class SortCoinsComponent {
     const [sortBy, descending] = selectedOptions.split('-');
     const isDescending = descending === 'true';
 
-    console.log(sortBy, isDescending)
-
     this.coins$ = this.coinService.getCoinsSorted(sortBy, isDescending);
   }
 }
