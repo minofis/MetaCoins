@@ -5,7 +5,6 @@ import { catchError, Observable, of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { ICoin } from '../../../models/coin';
 import { OwnershipService } from '../../../services/ownership.service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-wallet-coins',

@@ -1,4 +1,6 @@
 using AutoMapper;
+using MetaCoins.API.Dtos.CoinDtos;
+using MetaCoins.API.Dtos.LikeDtos;
 using MetaCoins.BLL.Services;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +20,41 @@ namespace MetaCoins.API.Controllers
             _likesService = likesService;
             _usersService = usersService;
             _mapper = mapper;
+        }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("by-username/{username}")]
+        public async Task<ActionResult<List<CoinResponseDto>>> GetUserLikesByUsername(string username)
+        {
+            // Get user id from the current user
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            // Check if userId is null
+            if (userId == null)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                // Get the likes
+                var likedCoins = await _likesService.GetLikedCoinsByUsernameAsync(username);
+
+                // Map the likes to the response DTOs
+                var likedCoinResponseDtos = _mapper.Map<List<CoinResponseDto>>(likedCoins);
+
+                // Return a 200 Ok response with the likes
+                return Ok(likedCoinResponseDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                // Return a 404 Not Found response with the error message
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                // Return a 500 Internal Server Error with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
         }
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]

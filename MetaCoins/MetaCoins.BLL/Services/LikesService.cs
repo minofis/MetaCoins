@@ -14,6 +14,15 @@ namespace MetaCoins.BLL.Services
             _usersService = usersService;
         }
 
+        public async Task<List<Coin>> GetLikedCoinsByUsernameAsync(string username)
+        {
+            // Get likes by specificated username
+            var likedCoins = await _likesRepo.GetLikedCoinsByUsernameAsync(username)
+                ?? throw new ArgumentException($"Likes of user with username {username} not found.");
+
+            return likedCoins;
+        }
+
         public async Task LikeCoinAsync(Guid userId, Guid coinId)
         {
             var user = await _usersService.GetUserByIdAsync(userId);

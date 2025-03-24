@@ -1,6 +1,4 @@
-using System.Net;
 using AutoMapper;
-using MetaCoins.API.Dtos.LikeDtos;
 using MetaCoins.API.Dtos.UserDtos;
 using MetaCoins.API.Dtos.WalletDtos;
 using MetaCoins.Core.Interfaces.Services;
@@ -73,19 +71,6 @@ namespace MetaCoins.API.Controllers
 
             // Return a 200 Ok response with the wallet
             return Ok(walletResponseDto);
-        }
-
-        [HttpGet("{username}/likes")]
-        public async Task<ActionResult<List<LikeResponseDto>>> GetUserLikesByUsername(string username)
-        {
-            // Get the likes
-            var likes = await _usersService.GetUserLikesByUsernameAsync(username);
-
-            // Map the likes to the response DTOs
-            var likeResponseDtos = _mapper.Map<List<LikeResponseDto>>(likes);
-
-            // Return a 200 Ok response with the likes
-            return Ok(likeResponseDtos);
         }
 
         [HttpPost("login")]

@@ -11,6 +11,7 @@ import { CoinComponent } from './components/coin/coin/coin.component';
 import { FeedComponent } from './components/pages/feed/feed.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { NotFoundComponent } from './components/pages/not-found/not-found.component';
+import { UserLikesComponent } from './components/pages/user-likes/user-likes.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "/register", pathMatch: 'full'},
@@ -19,6 +20,7 @@ const routes: Routes = [
 
   {path: "feed", component: FeedComponent},
   {path: ":username/profile", component: ProfileComponent},
+  {path: ":username/likes", component: UserLikesComponent},
   
 
 //  {path: "@:username", component: UserProfileComponent},

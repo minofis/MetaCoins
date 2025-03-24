@@ -171,19 +171,5 @@ namespace MetaCoins.BLL.Services
 
             return wallet;
         }
-
-        public async Task<List<Like>> GetUserLikesByUsernameAsync(string username)
-        {
-            // Get user by username
-            var user = await _userManager.Users
-                .Include(u => u.Likes)
-                .FirstOrDefaultAsync(u => u.UserName == username)
-                ?? throw new ArgumentException($"User with username {username} not found.");
-
-            var likes = user.Likes
-                ?? throw new ArgumentException($"Likes of user with username {username} not found.");
-
-            return likes;
-        }
     }
 }
