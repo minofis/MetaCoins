@@ -1,5 +1,9 @@
 <div class="form">
-    <form [formGroup]="sortCoinsForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="searchCoinsForm" (ngSubmit)="onSubmit()">
+            <label for="filterByUsername">Filter coins by username:</label>
+            <input type="text" id="filterByUsername" formControlName="username">
+            <br>
+
             <label for="sortBy">Sort coins by:</label>
             <select name="sortBy" id="sortBy" formControlName="sortOption">
                 <option value="" disabled selected>Sort by...</option> 
@@ -8,10 +12,13 @@
                 <option value="createdAt-true">Newest</option>
                 <option value="createdAt-false">Oldest</option>
             </select>
-            <button type="submit">Sort</button>
+            <br>
+            
+            <button type="submit">Search</button>
     </form>
 </div>
-<ng-container *ngIf = "coins$ | async as coins">
+
+<ng-container *ngIf = "coins">
     <div *ngFor = "let coin of coins">
         <img src="{{coin.imageUrl}}" alt="" width="100px">
         <div>Owner: {{coin.ownerUsername}}</div>
@@ -20,3 +27,7 @@
         <hr>
     </div>
 </ng-container>
+
+<button (click)="prevPage()" [disabled]="hasPreviousPage === false">Previous page</button>
+<span>Page: {{currentPage}}</span>
+<button (click)="nextPage()" [disabled]="hasNextPage === false">Next page</button>

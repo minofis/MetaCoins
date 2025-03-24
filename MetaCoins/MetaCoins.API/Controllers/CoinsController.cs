@@ -25,16 +25,25 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]
         [HttpGet]
-        public async Task<ActionResult<List<CoinResponseDto>>> GetAllCoins([FromQuery] QueryObject query)
+        public async Task<ActionResult<List<PaginatedResult<CoinResponseDto>>>> GetAllCoins([FromQuery] QueryObject query)
         {
                 // Get coins by query
                 var coins = await _coinsService.GetAllCoinsAsync(query);
 
-                // Map the coins to a list of response DTOs
-                var coinResponseDtos = _mapper.Map<List<CoinResponseDto>>(coins);
+                var skipNumber = (query.PageNumber - 1) * query.PageSize;
 
-                // Return a 200 Ok response with the list of coins
-                return Ok(coinResponseDtos);
+                var coinItems = coins.Skip(skipNumber).Take(query.PageSize).ToList();
+
+                var result = new PaginatedResult<CoinResponseDto>
+                {
+                    Items = coinItems.Select(_mapper.Map<CoinResponseDto>).ToList(),
+                    TotalItems = coins.Count(),
+                    Page = query.PageNumber,
+                    PageSize = query.PageSize
+                };
+
+                // Return a 200 Ok response with the list of paginated coins
+                return Ok(result);
         }
 
         [HttpGet("{id}")]

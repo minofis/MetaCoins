@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ICoin } from '../models/coin';
 import { IOwnerRecord } from '../models/owner-record';
+import { IPaginatedResult } from '../models/paginated-result';
 
 @Injectable({
   providedIn: 'root'
@@ -13,18 +14,19 @@ export class CoinService {
 
   baseServerUrl: string = "http://localhost:5244/meta-coins/coins/"
 
-  getAllCoins () : Observable<ICoin[]>
-  {
-    return this._httpClient.get<ICoin[]>(this.baseServerUrl, {withCredentials: true,});
-  }
-
-  getCoinsSorted (sortBy: string = 'createdAt', descending: boolean = false) : Observable<ICoin[]>
+  getAllCoins (query: {sortBy: string, descending: boolean, pageNumber: number, pageSize: number, username: string}) : Observable<IPaginatedResult<ICoin>>
   {
     let params = new HttpParams()
-      .set('sortBy', sortBy)
-      .set('descending', descending.toString())
+      .set('sortBy', query.sortBy)
+      .set('descending', query.descending.toString())
+      .set('pageNumber', query.pageNumber.toString())
+      .set('pageSize', query.pageSize.toString())
       
-    return this._httpClient.get<ICoin[]>(this.baseServerUrl + 'sort-by', {params, withCredentials: true,});
+      if (query.username) {
+        params = params.set('username', query.username)
+      }
+      
+    return this._httpClient.get<IPaginatedResult<ICoin>>(this.baseServerUrl, {params, withCredentials: true,});
   }
 
   getCoin (coinId: string) : Observable<ICoin>

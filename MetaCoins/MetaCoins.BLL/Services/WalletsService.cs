@@ -18,17 +18,6 @@ namespace MetaCoins.BLL.Services
             return await _walletsRepo.GetAllWalletsAsync();
         }
 
-        public async Task<List<Wallet>> GetWalletsByFilterAsync(string? ownerUsername, string? status, string? type)
-        {
-            var filterDto = new WalletsFilterDto{
-                OwnerUsername = ownerUsername,
-                Status = status,
-                Type = type,
-            };
-
-            return await _walletsRepo.GetWalletsByFilterAsync(filterDto);
-        }
-
         public async Task<Wallet> GetWalletByIdAsync(Guid walletId)
         {
             // Get wallet by specificated ID

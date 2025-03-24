@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ICoin } from '../../../models/coin';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { CoinService } from '../../../services/coin.service';
 
 @Component({
@@ -11,14 +11,24 @@ import { CoinService } from '../../../services/coin.service';
 })
 export class SortCoinsComponent {
 
-  public coins$?: Observable<ICoin[]>;
+  public coins: ICoin[] = [];
+  currentPage = 1;
+  pageSize = 10;
+  totalCoins = 0;
+  hasNextPage = false;
+  hasPreviousPage = false;
 
   public ngOnInit(): void
   {
-    this.coins$ = this.coinService.getAllCoins();
+    this.onSubmit();
   }
 
   public sortCoinsForm = new FormGroup({
+    sortOption: new FormControl<string>('')
+  });
+
+  public searchCoinsForm = new FormGroup({
+    username: new FormControl<string>(''),
     sortOption: new FormControl<string>('')
   });
   
@@ -26,11 +36,50 @@ export class SortCoinsComponent {
 
   onSubmit(): void
   {
-    const selectedOptions = this.sortCoinsForm.get('sortOption')?.value || 'likes-true';
+    this.currentPage = 1; 
+    this.loadCoins();
+  }
+
+  public loadCoins()
+  {
+    const selectedOptions = this.searchCoinsForm.get('sortOption')?.value || 'likes-true';
+    const filterUsername = this.searchCoinsForm.get('username')?.value || '';
 
     const [sortBy, descending] = selectedOptions.split('-');
     const isDescending = descending === 'true';
 
-    this.coins$ = this.coinService.getCoinsSorted(sortBy, isDescending);
+    let query =
+    {
+      username: filterUsername,
+      sortBy: sortBy,
+      descending: isDescending,
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    }
+
+    this.coinService.getAllCoins(query).subscribe(
+      (response) => {
+        this.coins = response.items;
+        this.currentPage = response.page;
+        this.pageSize = response.pageSize;
+        this.totalCoins = response.totalItems;
+        this.hasNextPage = response.hasNextPage;
+        this.hasPreviousPage = response.hasPreviousPage;
+      }
+    );
+  }
+
+  public prevPage()
+  {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadCoins();
+    }
+  }
+
+  public nextPage()
+  {
+    this.currentPage++;
+    this.loadCoins();
   }
 }

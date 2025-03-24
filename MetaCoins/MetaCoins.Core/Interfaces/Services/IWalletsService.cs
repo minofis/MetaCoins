@@ -5,7 +5,6 @@ namespace MetaCoins.Core.Interfaces.Services
     public interface IWalletsService
     {
         Task<List<Wallet>> GetAllWalletsAsync();
-        Task<List<Wallet>> GetWalletsByFilterAsync(string? ownerUsername, string? status, string? type);
         Task<Wallet> GetWalletByIdAsync(Guid walletId);
         Task<Wallet> GetWalletByUsernameAsync(string username);
         Task<List<Coin>> GetWalletCoinsByUsernameAsync(string username);

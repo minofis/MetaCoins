@@ -51,10 +51,15 @@ namespace MetaCoins.BLL.Services
 
             if (coins == null || coins.Count == 0)
             {
-                return new List<Coin>(); 
+                return new List<Coin>();
             }
 
             var queryCoins = coins.AsQueryable();
+
+            if (!string.IsNullOrEmpty(query.Username))
+            {
+                queryCoins = queryCoins.Where(c => c.Wallet.User.UserName.Contains(query.Username));
+            }
 
             if (!string.IsNullOrEmpty(query.SortBy))
             {
@@ -77,9 +82,7 @@ namespace MetaCoins.BLL.Services
                 }
             }
             
-            var skipNumber = (query.PageNumber - 1) * query.PageSize;
-
-            return await queryCoins.Skip(skipNumber).Take(query.PageSize).ToListAsync();
+            return queryCoins.ToList();
         }
 
         public async Task<Coin> GetCoinByIdAsync(Guid coinId)
