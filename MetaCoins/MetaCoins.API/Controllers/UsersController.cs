@@ -60,19 +60,6 @@ namespace MetaCoins.API.Controllers
             };
         }
 
-        [HttpGet("{id}/wallet")]
-        public async Task<ActionResult<List<WalletResponseDto>>> GetUserWalletById(Guid id)
-        {
-            // Get a wallet
-            var wallet = await _usersService.GetUserWalletByIdAsync(id);
-
-            // Map the wallet to a response DTO
-            var walletResponseDto = _mapper.Map<WalletResponseDto>(wallet);
-
-            // Return a 200 Ok response with the wallet
-            return Ok(walletResponseDto);
-        }
-
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody]UserLoginRequestDto loginDto)
         {

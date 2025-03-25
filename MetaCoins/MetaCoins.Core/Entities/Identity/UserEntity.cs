@@ -11,5 +11,6 @@ namespace MetaCoins.Core.Entities.Identity
         public Profile Profile { get; set; }
 
         public List<Like> Likes { get; set; }
+        public List<Vote> Votes { get; set; }
     }
 }

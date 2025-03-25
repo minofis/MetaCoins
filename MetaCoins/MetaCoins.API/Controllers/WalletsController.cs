@@ -50,7 +50,9 @@ namespace MetaCoins.API.Controllers
             try
             {
                 // Get user wallet
-                var wallet = await _usersService.GetUserWalletByIdAsync(userId);
+                var user = await _usersService.GetUserByIdAsync(userId);
+                // Get user wallet
+                var wallet = await _walletsService.GetWalletByUsernameAsync(user.UserName);
 
                 // Map the wallet to a response DTO
                 var walletResponseDto = _mapper.Map<WalletResponseDto>(wallet);

@@ -39,6 +39,7 @@ namespace MetaCoins.BLL.Services
         {
             return await _userManager.Users
                 .Include(u => u.Likes)
+                .Include(u => u.Votes)
                 .FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException($"User with ID {userId} not found.");
         }
@@ -156,20 +157,6 @@ namespace MetaCoins.BLL.Services
         public async Task<Guid> GetCurrentUserIdAsync()
         {
             return Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirst("userId")?.Value);
-        }
-
-        public async Task<Wallet> GetUserWalletByIdAsync(Guid userId)
-        {
-            var user =  await _userManager.Users
-                .Include(u => u.Wallet)
-                    .ThenInclude(w => w.Status)
-                .FirstOrDefaultAsync(u => u.Id == userId)
-                ?? throw new ArgumentException($"User with ID {userId} not found.");
-
-            var wallet = user.Wallet
-                ?? throw new ArgumentException($"Wallet of user with ID {userId} not found.");
-
-            return wallet;
         }
     }
 }

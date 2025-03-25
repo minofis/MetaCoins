@@ -13,6 +13,7 @@ namespace MetaCoins.Core.Entities
         public Wallet Creator { get; set; }
 
         public List<Like> Likes { get; set; } = new();
+        public List<Vote> Votes { get; set; } = new();
 
         public ICollection<CoinOwnerRecord> OwnershipRecords { get; set; } = new List<CoinOwnerRecord>();
         public DateTime CreatedAt { get; set; }
