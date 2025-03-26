@@ -1,5 +1,4 @@
 using MetaCoins.Core.Entities.Identity;
-using MetaCoins.Core.Entities.Lookups.Wallet;
 
 namespace MetaCoins.Core.Entities
 {
@@ -11,12 +10,9 @@ namespace MetaCoins.Core.Entities
         public List<Transaction> RecivedTransactions { get; set; } 
         public ICollection<Coin> Coins { get; set; }
 
-        public int StatusId { get; set; } 
-        public WalletStatus Status { get; set; }
-
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
 
-        public WalletDetails Details { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

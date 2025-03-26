@@ -9,11 +9,8 @@ namespace MetaCoins.API.Helpers
         public WalletProfile()
         {
             CreateMap<Wallet, WalletResponseDto>()
-                .ForMember(t => t.Status, o => o.MapFrom(s => s.Status.Name))
-                .ForMember(t => t.OwnerUsername, o => o.MapFrom(s => s.User.UserName));
-            
-            CreateMap<WalletDetails, WalletDetailsResponseDto>()
-                .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.CreatedAt.ToString()));
+                .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.CreatedAt.ToString()))
+                .ForMember(t => t.OwnerUsername, o => o.MapFrom(s => s.User.UserName));            
         }
     }
 }

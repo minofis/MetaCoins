@@ -1,4 +1,4 @@
-using MetaCoins.Core.Entities;
+using MetaCoins.Core.Entities.Voting;
 
 namespace MetaCoins.Core.Interfaces.Repositories
 {

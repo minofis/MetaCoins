@@ -26,62 +26,18 @@ namespace MetaCoins.BLL.Services
             return wallet;
         }
 
-        public async Task<WalletDetails> GetWalletDetailsByIdAsync(Guid walletId)
-        {
-            // Get wallet by specificated ID
-            var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
-                ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
-
-            // Get details of the wallet
-            var walletDetails = wallet.Details
-                ?? throw new ArgumentException($"Details of wallet with ID {walletId} not found.");
-
-            return walletDetails;
-        }
-
         public async Task CreateWalletAsync(Guid walletId, Guid userId)
         {
             // Create a wallet
             var wallet = new Wallet
             {
                 Id = walletId,
-                StatusId = 1,
-                UserId = userId
-            };
-
-            wallet.Details = new WalletDetails
-            {
-                WalletId = wallet.Id,
+                UserId = userId,
                 CreatedAt = DateTime.Now.ToUniversalTime()
             };
 
             // Add the wallet
             await _walletsRepo.CreateWalletAsync(wallet);
-        }
-
-        public async Task UpdateWalletStatusByIdAsync(Guid walletId, string status)
-        {
-            var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
-                ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
-
-            if (wallet.Status.Name == "Closed")
-            {
-                throw new ArgumentException("Wallet is closed");
-            }
-            if (wallet.Status.Name == status)
-            {
-                throw new ArgumentException($"Wallet is already {status}");
-            }
-
-            // Get wallet status id by name
-            int statusId = await _walletsRepo.GetWalletStatusId(status);
-
-            if (statusId == 0)
-            {
-                throw new ArgumentException($"Wallet status with name {status} not found.");
-            }
-
-            await _walletsRepo.UpdateWalletStatusByIdAsync(walletId, statusId);
         }
 
         public async Task<List<Transaction>> GetRecivedTransactionsByIdAsync(Guid walletId)

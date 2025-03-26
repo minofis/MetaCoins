@@ -5,6 +5,6 @@ namespace MetaCoins.API.Dtos.WalletDtos
         public Guid Id { get; set; }
         public string OwnerUsername { get; set; }
         public decimal Balance { get; set; }
-        public string Status { get; set; }
+        public string CreatedAt { get; set; }
     }
 }

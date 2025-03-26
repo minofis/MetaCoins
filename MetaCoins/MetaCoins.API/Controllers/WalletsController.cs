@@ -101,7 +101,7 @@ namespace MetaCoins.API.Controllers
                 // Get wallet by the specified ID
                 var wallet = await _walletsService.GetWalletByIdAsync(id);
 
-                if (wallet.UserId != userId || wallet.Status.Name == "Closed")
+                if (wallet.UserId != userId)
                 {
                     return Forbid("Bearer");
                 }
@@ -176,11 +176,6 @@ namespace MetaCoins.API.Controllers
                 // Get wallet by the specified username
                 var wallet = await _walletsService.GetWalletByUsernameAsync(username);
 
-                if (wallet.Status.Name == "Closed")
-                {
-                    return Forbid("Bearer");
-                }
-
                 // Get the wallet coins by the specified username
                 var coins = await _walletsService.GetWalletCoinsByUsernameAsync(username);
 
@@ -202,67 +197,6 @@ namespace MetaCoins.API.Controllers
             };
         }
 
-        [Authorize(Policy = "AdminPolicy")]
-        [HttpPut("{id}/status")]
-        public async Task<ActionResult> UpdateWalletStatus(Guid id, string status)
-        {
-            try
-            {
-                await _walletsService.UpdateWalletStatusByIdAsync(id, status);
-
-                return Ok();
-            }
-            catch (ArgumentException ex)
-            {
-                // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
-            }
-            catch(Exception ex)
-            {
-                // Return a 500 Internal Server Error with the error message
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            };
-        }
-
-        [Authorize(Policy = "CustomerPolicy")]
-        [HttpGet("{id}/details")]
-        public async Task<ActionResult<WalletDetailsResponseDto>> GetWalletDetails(Guid id)
-        {
-            // Get user id from the current user
-            var userId = await _usersService.GetCurrentUserIdAsync();
-
-            // Check if userId is null
-            if (userId == null)
-            {
-                return Unauthorized("User isn't authenticated");
-            }
-            try
-            {
-                // Get the wallet details by the specified ID
-                var walletDetails = await _walletsService.GetWalletDetailsByIdAsync(id);
-
-                if (walletDetails.Wallet.UserId != userId || walletDetails.Wallet.Status.Name == "Closed")
-                {
-                    return Forbid("Bearer");
-                }
-
-                // Map the wallet details entity to response DTO
-                var walletDetailsResponseDto = _mapper.Map<WalletDetailsResponseDto>(walletDetails);
-
-                // Return a 200 Ok response with the wallet details
-                return Ok(walletDetailsResponseDto);
-            }
-            catch (ArgumentException ex)
-            {
-                // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
-            }
-            catch(Exception ex)
-            {
-                // Return a 500 Internal Server Error with the error message
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            };
-        }
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/sent-transactions")]

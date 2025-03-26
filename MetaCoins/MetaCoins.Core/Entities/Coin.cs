@@ -1,3 +1,5 @@
+using MetaCoins.Core.Entities.Voting;
+
 namespace MetaCoins.Core.Entities
 {
     public class Coin

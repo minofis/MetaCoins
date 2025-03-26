@@ -30,7 +30,6 @@ namespace MetaCoins.BLL.Services
         {
             return await _userManager.Users
                 .Include(u => u.Wallet)
-                    .ThenInclude(w => w.Status)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -100,8 +99,8 @@ namespace MetaCoins.BLL.Services
             user.Wallet = new Wallet
             {
                 Id = Guid.NewGuid(),
-                StatusId = 1,
-                UserId = user.Id
+                UserId = user.Id,
+                CreatedAt = DateTime.Now.ToUniversalTime()
             };
 
             // Create a new profile
@@ -110,12 +109,6 @@ namespace MetaCoins.BLL.Services
                 Id = Guid.NewGuid(),
                 Description = "I like MetaCoins :3",
                 UserId = user.Id
-            };
-
-            user.Wallet.Details = new WalletDetails
-            {
-                WalletId = user.Wallet.Id,
-                CreatedAt = DateTime.Now.ToUniversalTime()
             };
 
             var result = await _userManager.CreateAsync(user, password);

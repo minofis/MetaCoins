@@ -9,8 +9,6 @@ namespace MetaCoins.Core.Interfaces.Repositories
         Task<Wallet> GetWalletByIdAsync(Guid walletId);
         Task<Wallet> GetWalletByUsernameAsync(string username);
         Task CreateWalletAsync(Wallet wallet);
-        Task<int> GetWalletStatusId(string name);
-        Task UpdateWalletStatusByIdAsync(Guid walletId, int statusId);
         Task SaveChangesAsync();
     }
 }

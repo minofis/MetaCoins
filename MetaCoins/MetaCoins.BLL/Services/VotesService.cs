@@ -1,4 +1,4 @@
-using MetaCoins.Core.Entities;
+using MetaCoins.Core.Entities.Voting;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
 

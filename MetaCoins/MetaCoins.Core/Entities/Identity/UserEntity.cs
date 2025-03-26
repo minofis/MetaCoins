@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities.Voting;
 using Microsoft.AspNetCore.Identity;
 
 namespace MetaCoins.Core.Entities.Identity
