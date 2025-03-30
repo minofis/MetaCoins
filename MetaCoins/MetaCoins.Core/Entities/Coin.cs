@@ -7,6 +7,7 @@ namespace MetaCoins.Core.Entities
         public Guid Id { get; set; }
         public string ImageUrl { get; set; }
         public int LikesCount => Likes.Count;
+        public int VotesCount => Votes.Count;
         
         public Guid WalletId { get; set; }
         public Wallet Wallet { get; set; }

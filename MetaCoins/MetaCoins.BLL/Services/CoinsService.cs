@@ -45,13 +45,13 @@ namespace MetaCoins.BLL.Services
             await _coinsRepo.SaveChangesAsync();
         }
 
-        public async Task<List<Coin>> GetAllCoinsAsync(QueryObject query)
+        public async Task<PaginatedResult<Coin>> GetAllCoinsAsync(CoinQueryObject query)
         {
             var coins = await _coinsRepo.GetAllCoinsAsync();
 
             if (coins == null || coins.Count == 0)
             {
-                return new List<Coin>();
+                return new PaginatedResult<Coin>();
             }
 
             var queryCoins = coins.AsQueryable();
@@ -61,28 +61,44 @@ namespace MetaCoins.BLL.Services
                 queryCoins = queryCoins.Where(c => c.Wallet.User.UserName.Contains(query.Username));
             }
 
-            if (!string.IsNullOrEmpty(query.SortBy))
+            IOrderedQueryable<Coin>? orderedQuery = null;
+            foreach(var sort in query.SortBy)
             {
-                switch (query.SortBy.ToLower())
+                if (orderedQuery == null)
                 {
-                    case "likes": 
-                        queryCoins = query.Descending
-                            ? queryCoins.OrderByDescending(c => c.LikesCount)
-                            : queryCoins.OrderBy(c => c.LikesCount);
-                        break;
-
-                    case "createdat": 
-                        queryCoins = query.Descending
-                            ? queryCoins.OrderByDescending(c => c.CreatedAt)
-                            : queryCoins.OrderBy(c => c.CreatedAt);
-                        break;
-                        
-                    default: 
-                        break;
+                    orderedQuery = sort switch
+                    {
+                        ("likes", true) => queryCoins.OrderByDescending(c => c.LikesCount),
+                        ("likes", false) => queryCoins.OrderBy(c => c.LikesCount),
+                        ("createdAt", true) => queryCoins.OrderByDescending(c => c.CreatedAt),
+                        ("createdAt", false) => queryCoins.OrderBy(c => c.CreatedAt),
+                        _ => orderedQuery
+                    };
+                }
+                else
+                {
+                    orderedQuery = sort switch
+                    {
+                        ("likes", true) => orderedQuery.ThenByDescending(c => c.LikesCount),
+                        ("likes", false) => orderedQuery.ThenBy(c => c.LikesCount),
+                        ("createdAt", true) => orderedQuery.ThenByDescending(c => c.CreatedAt),
+                        ("createdAt", false) => orderedQuery.ThenBy(c => c.CreatedAt),
+                        _ => orderedQuery
+                    };
                 }
             }
+
+            queryCoins = orderedQuery ?? queryCoins;
+
+            var paginatedResult = new PaginatedResult<Coin>
+            {
+                Items = queryCoins.Skip((query.PageNumber - 1) * query.PageSize).Take(query.PageSize).ToList(),
+                TotalItems = coins.Count(),
+                Page = query.PageNumber,
+                PageSize = query.PageSize
+            };
             
-            return queryCoins.ToList();
+            return paginatedResult;
         }
 
         public async Task<Coin> GetCoinByIdAsync(Guid coinId)

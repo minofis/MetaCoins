@@ -14,7 +14,7 @@ namespace MetaCoins.Core.Entities.Voting
         public DailyVote DailyVote { get; set; }
         public List<Vote> Votes { get; set; }
 
-        public Guid WinnerId { get; set; }
+        public Guid? WinnerId { get; set; }
         public Coin? Winner { get; set; }
     }
 }

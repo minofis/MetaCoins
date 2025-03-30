@@ -13,9 +13,12 @@ using MetaCoins.DAL.Data.Repositories;
 using MetaCoins.BLL.Services;
 using MetaCoins.Core.Interfaces.Auth;
 using MetaCoins.API.Helpers;
+using Quartz;
+using MetaCoins.BLL.Jobs.Voting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Database config
 builder.Services.AddDbContext<MetaCoinsDbContext>(options =>{
     options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(MetaCoinsDbContext)));
 });
@@ -23,6 +26,48 @@ builder.Services.AddDbContext<MetaCoinsDbContext>(options =>{
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<MetaCoinsDbContext>()
     .AddDefaultTokenProviders();
+
+// Quartz config
+builder.Services.AddQuartz(q =>{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var deactivateExpiredDailySessionsJobKey = new JobKey("DeactivateExpiredDailySessionsJob");
+    q.AddJob<DeactivateExpiredDailySessionsJob>(opts => opts.WithIdentity(deactivateExpiredDailySessionsJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(deactivateExpiredDailySessionsJobKey)
+        .WithIdentity("DeactivateExpiredDailySessionsJob-trigger")
+        .WithCronSchedule("59 59 23 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
+
+    var activateStartedDailySessionsJobKey = new JobKey("ActivateStartedDailySessionsJob");
+    q.AddJob<ActivateStartedDailySessionsJob>(opts => opts.WithIdentity(activateStartedDailySessionsJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(activateStartedDailySessionsJobKey)
+        .WithIdentity("ActivateStartedDailySessionsJob-trigger")
+        .WithCronSchedule("0 0 0 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
+
+    var calculateDailySessionResultJobKey = new JobKey("CalculateDailySessionResultJob");
+    q.AddJob<CalculateDailySessionResultJob>(opts => opts.WithIdentity(calculateDailySessionResultJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(calculateDailySessionResultJobKey)
+        .WithIdentity("CalculateDailySessionResultJob-trigger")
+        .WithCronSchedule("59 59 23 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
+
+    var deactivateExpiredWeeklySessionsJobKey = new JobKey("DeactivateExpiredWeeklySessionsJob");
+    q.AddJob<DeactivateExpiredWeeklySessionsJob>(opts => opts.WithIdentity(deactivateExpiredWeeklySessionsJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(deactivateExpiredWeeklySessionsJobKey)
+        .WithIdentity("DeactivateExpiredWeeklySessionsJob-trigger")
+        .WithCronSchedule("59 59 23 ? * SAT", x => x.InTimeZone(TimeZoneInfo.Utc)));
+
+    var createWeeklySessionJobKey = new JobKey("CreateWeeklySessionJob");
+    q.AddJob<CreateWeeklySessionJob>(opts => opts.WithIdentity(createWeeklySessionJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(createWeeklySessionJobKey)
+        .WithIdentity("CreateWeeklySessionJob-trigger")
+        .WithCronSchedule("0 0 0 ? * MON", x => x.InTimeZone(TimeZoneInfo.Utc)));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddHttpContextAccessor();
 

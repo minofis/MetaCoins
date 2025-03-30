@@ -1,5 +1,4 @@
 using MetaCoins.Core.Entities;
-using MetaCoins.Core.Entities.Helpers;
 
 namespace MetaCoins.Core.Interfaces.Repositories
 {

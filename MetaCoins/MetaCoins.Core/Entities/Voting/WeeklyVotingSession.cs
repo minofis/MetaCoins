@@ -10,7 +10,7 @@ namespace MetaCoins.Core.Entities.Voting
 
         public List<DailyVotingSession> DailySessions { get; set; }
 
-        public Guid WinnerId { get; set; }
+        public Guid? WinnerId { get; set; }
         public Coin? Winner { get; set; }
     }
 }

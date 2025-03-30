@@ -5,7 +5,7 @@ namespace MetaCoins.Core.Interfaces.Services
 {
     public interface ICoinsService
     {
-        Task<List<Coin>> GetAllCoinsAsync(QueryObject query);
+        Task<PaginatedResult<Coin>> GetAllCoinsAsync(CoinQueryObject query);
         Task<Coin> GetCoinByIdAsync(Guid coinId);
         Task<List<CoinOwnerRecord>> GetCoinOwnershipRecordsByIdAsync(Guid coinId);
         Task CreateCoinAsync(string ownerUsername);
