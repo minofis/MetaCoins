@@ -2,5 +2,5 @@
 bin
 obj
 .vscode
-data
+postgresql_data
 wwwroot

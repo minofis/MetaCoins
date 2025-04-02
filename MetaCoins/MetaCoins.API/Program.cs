@@ -38,13 +38,6 @@ builder.Services.AddQuartz(q =>{
         .WithIdentity("DeactivateExpiredDailySessionsJob-trigger")
         .WithCronSchedule("59 59 23 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
 
-    var activateStartedDailySessionsJobKey = new JobKey("ActivateStartedDailySessionsJob");
-    q.AddJob<ActivateStartedDailySessionsJob>(opts => opts.WithIdentity(activateStartedDailySessionsJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(activateStartedDailySessionsJobKey)
-        .WithIdentity("ActivateStartedDailySessionsJob-trigger")
-        .WithCronSchedule("0 0 0 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
-
     var calculateDailySessionResultJobKey = new JobKey("CalculateDailySessionResultJob");
     q.AddJob<CalculateDailySessionResultJob>(opts => opts.WithIdentity(calculateDailySessionResultJobKey));
     q.AddTrigger(opts => opts
@@ -58,6 +51,13 @@ builder.Services.AddQuartz(q =>{
         .ForJob(deactivateExpiredWeeklySessionsJobKey)
         .WithIdentity("DeactivateExpiredWeeklySessionsJob-trigger")
         .WithCronSchedule("59 59 23 ? * SAT", x => x.InTimeZone(TimeZoneInfo.Utc)));
+
+    var activateStartedDailySessionsJobKey = new JobKey("ActivateStartedDailySessionsJob");
+    q.AddJob<ActivateStartedDailySessionsJob>(opts => opts.WithIdentity(activateStartedDailySessionsJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(activateStartedDailySessionsJobKey)
+        .WithIdentity("ActivateStartedDailySessionsJob-trigger")
+        .WithCronSchedule("0 0 0 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
 
     var createWeeklySessionJobKey = new JobKey("CreateWeeklySessionJob");
     q.AddJob<CreateWeeklySessionJob>(opts => opts.WithIdentity(createWeeklySessionJobKey));
