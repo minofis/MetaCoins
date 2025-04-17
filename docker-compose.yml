@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Host=MetaCoinsDb;Port=5432;Database=MetaCoinsDb;Username=root;Password=root
+    depends_on:
+      - postgresDb
+    volumes:
+      - images_data:/app/wwwroot/images
+
+  postgresDb:
+    container_name: MetaCoinsDb
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: MetaCoinsDb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgresql_data:
+  images_data:

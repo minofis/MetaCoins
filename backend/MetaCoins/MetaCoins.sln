@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCoins.API", "MetaCoins.API\MetaCoins.API.csproj", "{196FF5E5-D188-4F12-801E-2B150FA17693}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCoins.BLL", "MetaCoins.BLL\MetaCoins.BLL.csproj", "{F6D613FE-6510-4FB2-B370-3DF4C86F57F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCoins.DAL", "MetaCoins.DAL\MetaCoins.DAL.csproj", "{9E4F68D3-BE09-4919-BCA8-733C10DF120E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCoins.Core", "MetaCoins.Core\MetaCoins.Core.csproj", "{5296FD3B-62DC-4FC8-AB85-28977C9D317D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{196FF5E5-D188-4F12-801E-2B150FA17693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{196FF5E5-D188-4F12-801E-2B150FA17693}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{196FF5E5-D188-4F12-801E-2B150FA17693}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{196FF5E5-D188-4F12-801E-2B150FA17693}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6D613FE-6510-4FB2-B370-3DF4C86F57F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6D613FE-6510-4FB2-B370-3DF4C86F57F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6D613FE-6510-4FB2-B370-3DF4C86F57F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6D613FE-6510-4FB2-B370-3DF4C86F57F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4F68D3-BE09-4919-BCA8-733C10DF120E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E4F68D3-BE09-4919-BCA8-733C10DF120E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E4F68D3-BE09-4919-BCA8-733C10DF120E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E4F68D3-BE09-4919-BCA8-733C10DF120E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5296FD3B-62DC-4FC8-AB85-28977C9D317D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5296FD3B-62DC-4FC8-AB85-28977C9D317D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5296FD3B-62DC-4FC8-AB85-28977C9D317D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5296FD3B-62DC-4FC8-AB85-28977C9D317D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
