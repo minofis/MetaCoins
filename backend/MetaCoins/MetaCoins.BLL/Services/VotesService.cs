@@ -106,14 +106,15 @@ namespace MetaCoins.BLL.Services
         {
             var query = new CoinQueryObject
             {
-                SortBy = new List<(string Field, bool Descending)>
+                SortBy = new List<CoinsSortOption>
                 {
-                    ("likes", true),
-                    ("createdAt", true)
+                    new() {Field = "likes", Descending = true},
+                    new() {Field = "createdAt", Descending = true}
                 },
                 PageNumber = 1,
                 PageSize = 8
             };
+            
 
             var paginatedCoins = await _coinsService.GetAllCoinsAsync(query);
 

@@ -68,23 +68,23 @@ namespace MetaCoins.BLL.Services
             {
                 if (orderedQuery == null)
                 {
-                    orderedQuery = sort switch
+                    orderedQuery = (sort.Field.ToLower(), sort.Descending) switch
                     {
                         ("likes", true) => queryCoins.OrderByDescending(c => c.LikesCount),
                         ("likes", false) => queryCoins.OrderBy(c => c.LikesCount),
-                        ("createdAt", true) => queryCoins.OrderByDescending(c => c.CreatedAt),
-                        ("createdAt", false) => queryCoins.OrderBy(c => c.CreatedAt),
+                        ("createdat", true) => queryCoins.OrderByDescending(c => c.CreatedAt),
+                        ("createdat", false) => queryCoins.OrderBy(c => c.CreatedAt),
                         _ => orderedQuery
                     };
                 }
                 else
                 {
-                    orderedQuery = sort switch
+                    orderedQuery = (sort.Field.ToLower(), sort.Descending) switch
                     {
                         ("likes", true) => orderedQuery.ThenByDescending(c => c.LikesCount),
                         ("likes", false) => orderedQuery.ThenBy(c => c.LikesCount),
-                        ("createdAt", true) => orderedQuery.ThenByDescending(c => c.CreatedAt),
-                        ("createdAt", false) => orderedQuery.ThenBy(c => c.CreatedAt),
+                        ("createdat", true) => orderedQuery.ThenByDescending(c => c.CreatedAt),
+                        ("createdat", false) => orderedQuery.ThenBy(c => c.CreatedAt),
                         _ => orderedQuery
                     };
                 }
