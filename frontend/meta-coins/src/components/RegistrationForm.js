@@ -20,11 +20,11 @@ const[error, setError] = useState("");
 
   }
 
-  function sendFormData(e){
+  async function sendFormData(e){
     e.preventDefault();
    
     try {
-     usersRegister(formData)
+    await usersRegister(formData)
      setFormData({username: "",email: "",password: ""})
     } catch (error) {
       setError(error.response.data.message)
