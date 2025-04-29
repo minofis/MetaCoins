@@ -8,7 +8,7 @@ namespace MetaCoins.Core.Entities.Voting
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public List<DailyVotingSession> DailySessions { get; set; }
+        public List<DailyVotingSession> DailySessions { get; set; } = new List<DailyVotingSession>();
 
         public Guid? WinnerId { get; set; }
         public Coin? Winner { get; set; }

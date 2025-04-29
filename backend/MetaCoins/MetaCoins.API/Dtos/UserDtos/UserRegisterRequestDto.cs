@@ -5,7 +5,7 @@ namespace MetaCoins.API.Dtos.UserDtos
     public class UserRegisterRequestDto
     {
         [Required]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
         [Required]
         public string Email { get; set; } = string.Empty;
         [Required]

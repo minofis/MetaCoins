@@ -2,6 +2,6 @@ namespace MetaCoins.API.Dtos.CoinDtos
 {
     public class CoinCreateRequestDto
     {
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
     }
 }

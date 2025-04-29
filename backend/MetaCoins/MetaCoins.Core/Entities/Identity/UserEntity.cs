@@ -6,12 +6,12 @@ namespace MetaCoins.Core.Entities.Identity
     public class UserEntity : IdentityUser<Guid>
     {
         public Guid WalletId { get; set; }
-        public Wallet Wallet { get; set; }
+        public Wallet? Wallet { get; set; }
 
         public Guid ProfileId { get; set; }
-        public Profile Profile { get; set; }
+        public Profile? Profile { get; set; }
 
-        public List<Like> Likes { get; set; }
-        public List<Vote> Votes { get; set; }
+        public List<Like> Likes { get; set; } = new List<Like>();
+        public List<Vote> Votes { get; set; } = new List<Vote>();
     }
 }

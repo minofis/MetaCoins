@@ -64,8 +64,11 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null) return Unauthorized("User isn't authenticated");
+            // Check if userId is empty
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            } 
             
             // Validate the incomming request
             if (transactionDto == null) return BadRequest("Transaction data is required");

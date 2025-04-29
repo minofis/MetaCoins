@@ -97,8 +97,8 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null)
+            // Check if userId is empty
+            if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }
@@ -132,8 +132,8 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null)
+            // Check if userId is empty
+            if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }
@@ -168,8 +168,8 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null)
+            // Check if userId is empty
+            if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }
@@ -203,7 +203,7 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
+            // Check if userId is empty
             if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
@@ -267,8 +267,8 @@ namespace MetaCoins.API.Controllers
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is null
-            if (userId == null)
+            // Check if userId is empty
+            if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }

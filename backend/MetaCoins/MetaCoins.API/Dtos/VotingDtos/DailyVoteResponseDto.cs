@@ -6,6 +6,6 @@ namespace MetaCoins.API.Dtos.VotingDtos
     {
         public Guid Id { get; set; }
         public Guid DailyVotingSessionId { get; set; }
-        public Guid[] CoinIds { get; set; }
+        public Guid[] CoinIds { get; set; } = [];
     }
 }
