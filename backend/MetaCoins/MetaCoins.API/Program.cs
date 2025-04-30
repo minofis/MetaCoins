@@ -14,7 +14,6 @@ using MetaCoins.BLL.Services;
 using MetaCoins.Core.Interfaces.Auth;
 using MetaCoins.API.Helpers;
 using Quartz;
-using MetaCoins.BLL.Jobs.Voting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,43 +31,8 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>()
 builder.Services.AddQuartz(q =>{
     q.UseMicrosoftDependencyInjectionJobFactory();
 
-    var deactivateExpiredDailySessionsJobKey = new JobKey("DeactivateExpiredDailySessionsJob");
-    q.AddJob<DeactivateExpiredDailySessionsJob>(opts => opts.WithIdentity(deactivateExpiredDailySessionsJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(deactivateExpiredDailySessionsJobKey)
-        .WithIdentity("DeactivateExpiredDailySessionsJob-trigger")
-        .WithCronSchedule("59 59 23 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
-
-    var calculateDailySessionResultJobKey = new JobKey("CalculateDailySessionResultJob");
-    q.AddJob<CalculateDailySessionResultJob>(opts => opts.WithIdentity(calculateDailySessionResultJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(calculateDailySessionResultJobKey)
-        .WithIdentity("CalculateDailySessionResultJob-trigger")
-        .WithCronSchedule("59 59 23 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
-
-    var deactivateExpiredWeeklySessionsJobKey = new JobKey("DeactivateExpiredWeeklySessionsJob");
-    q.AddJob<DeactivateExpiredWeeklySessionsJob>(opts => opts.WithIdentity(deactivateExpiredWeeklySessionsJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(deactivateExpiredWeeklySessionsJobKey)
-        .WithIdentity("DeactivateExpiredWeeklySessionsJob-trigger")
-        .WithCronSchedule("59 59 23 ? * SAT", x => x.InTimeZone(TimeZoneInfo.Utc)));
-
-    var activateStartedDailySessionsJobKey = new JobKey("ActivateStartedDailySessionsJob");
-    q.AddJob<ActivateStartedDailySessionsJob>(opts => opts.WithIdentity(activateStartedDailySessionsJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(activateStartedDailySessionsJobKey)
-        .WithIdentity("ActivateStartedDailySessionsJob-trigger")
-        .WithCronSchedule("0 0 0 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
-
-    var createWeeklySessionJobKey = new JobKey("CreateWeeklySessionJob");
-    q.AddJob<CreateWeeklySessionJob>(opts => opts.WithIdentity(createWeeklySessionJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(createWeeklySessionJobKey)
-        .WithIdentity("CreateWeeklySessionJob-trigger")
-        //.WithCronSchedule("0 0 0 ? * MON", x => x.InTimeZone(TimeZoneInfo.Utc)));
-        .WithCronSchedule("0 35 16 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
+    QuartzJobScheduler.ConfigureQuartzJobs(q);
 });
-
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddHttpContextAccessor();
@@ -78,7 +42,7 @@ builder.Services.AddCors(options =>
         options.AddPolicy("AllowAll",
             builder =>
             {
-                builder.WithOrigins("http://localhost:4200")
+                builder.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -143,25 +107,35 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+// Services Scope
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<IWalletsRepository, WalletsRepository>();
-builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
 builder.Services.AddScoped<IWalletsService, WalletsService>();
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
-builder.Services.AddScoped<ICoinsRepository, CoinsRepository>();
 builder.Services.AddScoped<ICoinsService, CoinsService>();
-builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
+builder.Services.AddScoped<ILikesService, LikesService>();
+builder.Services.AddScoped<ICoinVotesService, CoinVotesService>();
+builder.Services.AddScoped<IVotingSessionsService, VotingSessionsService>();
+
+// Repositories Scope
+builder.Services.AddScoped<IWalletsRepository, WalletsRepository>();
+builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+builder.Services.AddScoped<ICoinsRepository, CoinsRepository>();
 builder.Services.AddScoped<IProfilesRepository, ProfilesRepository>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
-builder.Services.AddScoped<ILikesService, LikesService>();
-builder.Services.AddScoped<IVotesRepository, VotesRepository>();
-builder.Services.AddScoped<IVotesService, VotesService>();
+builder.Services.AddScoped<ICoinVotesRepository, CoinVotesRepository>();
+builder.Services.AddScoped<IVotingSessionsRepository, VotingSessionsRepository>();
+
+// HttpClient Configuration
 builder.Services.AddHttpClient<IImageService, ImageService>();
+
+// AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(WalletProfile));
 builder.Services.AddAutoMapper(typeof(TransactionProfile));
 builder.Services.AddAutoMapper(typeof(CoinProfile));
-builder.Services.AddAutoMapper(typeof(VoteProfile));
+
+// JWT Configuration
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
 
 builder.Services.AddControllers();

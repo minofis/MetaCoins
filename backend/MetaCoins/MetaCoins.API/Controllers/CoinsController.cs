@@ -1,6 +1,5 @@
 using AutoMapper;
 using MetaCoins.API.Dtos.CoinDtos;
-using MetaCoins.API.Helpers;
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Helpers;
 using MetaCoins.Core.Interfaces.Services;
@@ -59,7 +58,7 @@ namespace MetaCoins.API.Controllers
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
@@ -85,13 +84,13 @@ namespace MetaCoins.API.Controllers
                 // Create a coin
                 await _coinsService.CreateCoinAsync(userId);
 
-                // Return a 201 Created response
-                return Created();
+                // Return a 200 Ok 
+                return Ok(new {message = "Coin created successfully"});
             }
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
@@ -125,7 +124,7 @@ namespace MetaCoins.API.Controllers
             catch (ArgumentException ex)
             {
                 // Return a 404 Not Found response with the error message
-                return NotFound(ex.Message);
+                return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {

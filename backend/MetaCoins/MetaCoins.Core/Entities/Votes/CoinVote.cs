@@ -1,8 +1,8 @@
 using MetaCoins.Core.Entities.Identity;
 
-namespace MetaCoins.Core.Entities
+namespace MetaCoins.Core.Entities.Votes
 {
-    public class Like
+    public class CoinVote
     {
         public Guid Id { get; set; }
 
@@ -11,6 +11,9 @@ namespace MetaCoins.Core.Entities
 
         public Guid CoinId { get; set; }
         public Coin Coin { get; set; } = null!;
+
+        public Guid VotingSessionId { get; set; }
+        public VotingSession VotingSession { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; }
     }

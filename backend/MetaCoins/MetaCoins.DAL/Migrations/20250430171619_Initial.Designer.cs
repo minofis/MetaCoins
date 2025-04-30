@@ -3,17 +3,20 @@ using System;
 using MetaCoins.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MetaCoins.DAL.Data.Migrations
+namespace MetaCoins.DAL.Migrations
 {
     [DbContext(typeof(MetaCoinsDbContext))]
-    partial class MetaCoinsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430171619_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,6 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DailyVoteId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
@@ -47,8 +47,6 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
-
-                    b.HasIndex("DailyVoteId");
 
                     b.HasIndex("WalletId");
 
@@ -299,6 +297,43 @@ namespace MetaCoins.DAL.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.Votes.VotingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VotingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Daily"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Weekly"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Custom"
+                        });
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.Profile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -356,57 +391,7 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DailyVotingSessionId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DailyVotingSessionId")
-                        .IsUnique();
-
-                    b.ToTable("DailyVotes");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVotingSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DailyVoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("WeeklyVotingSessionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("WinnerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeeklyVotingSessionId");
-
-                    b.HasIndex("WinnerId");
-
-                    b.ToTable("DailyVotingSessions");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.Vote", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVote", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -418,24 +403,39 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("DailyVotingSessionId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("VotingSessionId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CoinId");
 
-                    b.HasIndex("DailyVotingSessionId");
-
                     b.HasIndex("UserId");
 
-                    b.ToTable("Votes");
+                    b.HasIndex("VotingSessionId");
+
+                    b.ToTable("CoinVotes");
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.WeeklyVotingSession", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVotingSession", b =>
+                {
+                    b.Property<Guid>("CoinId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VotingSessionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CoinId", "VotingSessionId");
+
+                    b.HasIndex("VotingSessionId");
+
+                    b.ToTable("CoinVotingSessions");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.VotingSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -447,17 +447,31 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid?>("ParentVotingSessionId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("VotingTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("WinnerId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentVotingSessionId");
+
+                    b.HasIndex("VotingTypeId");
+
                     b.HasIndex("WinnerId");
 
-                    b.ToTable("WeeklyVotingSessions");
+                    b.ToTable("VotingSessions");
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Wallet", b =>
@@ -588,10 +602,6 @@ namespace MetaCoins.DAL.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MetaCoins.Core.Entities.Voting.DailyVote", null)
-                        .WithMany("Coins")
-                        .HasForeignKey("DailyVoteId");
-
                     b.HasOne("MetaCoins.Core.Entities.Wallet", "Wallet")
                         .WithMany("Coins")
                         .HasForeignKey("WalletId")
@@ -703,35 +713,7 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVote", b =>
-                {
-                    b.HasOne("MetaCoins.Core.Entities.Voting.DailyVotingSession", "DailyVotingSession")
-                        .WithOne("DailyVote")
-                        .HasForeignKey("MetaCoins.Core.Entities.Voting.DailyVote", "DailyVotingSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DailyVotingSession");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVotingSession", b =>
-                {
-                    b.HasOne("MetaCoins.Core.Entities.Voting.WeeklyVotingSession", "WeeklyVotingSession")
-                        .WithMany("DailySessions")
-                        .HasForeignKey("WeeklyVotingSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MetaCoins.Core.Entities.Coin", "Winner")
-                        .WithMany()
-                        .HasForeignKey("WinnerId");
-
-                    b.Navigation("WeeklyVotingSession");
-
-                    b.Navigation("Winner");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.Vote", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVote", b =>
                 {
                     b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
                         .WithMany()
@@ -739,30 +721,63 @@ namespace MetaCoins.DAL.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MetaCoins.Core.Entities.Voting.DailyVotingSession", "DailyVotingSession")
-                        .WithMany("Votes")
-                        .HasForeignKey("DailyVotingSessionId")
+                    b.HasOne("MetaCoins.Core.Entities.Identity.UserEntity", "User")
+                        .WithMany("CoinVotes")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MetaCoins.Core.Entities.Identity.UserEntity", "User")
-                        .WithMany("Votes")
-                        .HasForeignKey("UserId")
+                    b.HasOne("MetaCoins.Core.Entities.Votes.VotingSession", "VotingSession")
+                        .WithMany("CoinVotes")
+                        .HasForeignKey("VotingSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Coin");
 
-                    b.Navigation("DailyVotingSession");
-
                     b.Navigation("User");
+
+                    b.Navigation("VotingSession");
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.WeeklyVotingSession", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVotingSession", b =>
                 {
+                    b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
+                        .WithMany("CoinVotingSessions")
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Votes.VotingSession", "VotingSession")
+                        .WithMany("CoinVotingSessions")
+                        .HasForeignKey("VotingSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coin");
+
+                    b.Navigation("VotingSession");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.VotingSession", b =>
+                {
+                    b.HasOne("MetaCoins.Core.Entities.Votes.VotingSession", "ParentVotingSession")
+                        .WithMany("SubVotingSessions")
+                        .HasForeignKey("ParentVotingSessionId");
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.Votes.VotingType", "VotingType")
+                        .WithMany()
+                        .HasForeignKey("VotingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MetaCoins.Core.Entities.Coin", "Winner")
                         .WithMany()
                         .HasForeignKey("WinnerId");
+
+                    b.Navigation("ParentVotingSession");
+
+                    b.Navigation("VotingType");
 
                     b.Navigation("Winner");
                 });
@@ -820,6 +835,8 @@ namespace MetaCoins.DAL.Data.Migrations
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Coin", b =>
                 {
+                    b.Navigation("CoinVotingSessions");
+
                     b.Navigation("Likes");
 
                     b.Navigation("OwnershipRecords");
@@ -827,33 +844,23 @@ namespace MetaCoins.DAL.Data.Migrations
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Identity.UserEntity", b =>
                 {
-                    b.Navigation("Likes");
+                    b.Navigation("CoinVotes");
 
-                    b.Navigation("Votes");
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Profile", b =>
                 {
-                    b.Navigation("User")
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVote", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Votes.VotingSession", b =>
                 {
-                    b.Navigation("Coins");
-                });
+                    b.Navigation("CoinVotes");
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.DailyVotingSession", b =>
-                {
-                    b.Navigation("DailyVote")
-                        .IsRequired();
+                    b.Navigation("CoinVotingSessions");
 
-                    b.Navigation("Votes");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Voting.WeeklyVotingSession", b =>
-                {
-                    b.Navigation("DailySessions");
+                    b.Navigation("SubVotingSessions");
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Wallet", b =>
@@ -864,8 +871,7 @@ namespace MetaCoins.DAL.Data.Migrations
 
                     b.Navigation("SentTransactions");
 
-                    b.Navigation("User")
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

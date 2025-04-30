@@ -1,11 +1,12 @@
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Identity;
 using MetaCoins.Core.Entities.Lookups.Transaction;
-using MetaCoins.Core.Entities.Voting;
+using MetaCoins.Core.Entities.Lookups.Votes;
+using MetaCoins.Core.Entities.Votes;
 using MetaCoins.DAL.Data.Configurations;
 using MetaCoins.DAL.Data.Configurations.Identity;
 using MetaCoins.DAL.Data.Configurations.Lookups;
-using MetaCoins.DAL.Data.Configurations.Voting;
+using MetaCoins.DAL.Data.Configurations.Votes;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,15 +24,15 @@ namespace MetaCoins.DAL.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<CoinOwnerRecord> CoinOwnerRecords { get; set; }
 
-        // Voting
-        public DbSet<Vote> Votes { get; set; }
-        public DbSet<DailyVote> DailyVotes { get; set; }
-        public DbSet<DailyVotingSession> DailyVotingSessions { get; set; }
-        public DbSet<WeeklyVotingSession> WeeklyVotingSessions { get; set; }
+        // Votes
+        public DbSet<CoinVote> CoinVotes { get; set; }
+        public DbSet<VotingSession> VotingSessions { get; set; }
+        public DbSet<CoinVotingSession> CoinVotingSessions { get; set; }
 
         // Lookups
         public DbSet<TransactionType> TransactionTypes { get; set; }
         public DbSet<TransactionStatus> TransactionStatuses { get; set; }
+        public DbSet<VotingType> VotingTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,15 +42,15 @@ namespace MetaCoins.DAL.Data
             modelBuilder.ApplyConfiguration(new CoinConfiguration());
             modelBuilder.ApplyConfiguration(new LikeConfiguration());
             
-            // Voting
-            modelBuilder.ApplyConfiguration(new VoteConfiguration());
-            modelBuilder.ApplyConfiguration(new DailyVoteConfiguration());
-            modelBuilder.ApplyConfiguration(new DailyVotingSessionConfiguration());
-            modelBuilder.ApplyConfiguration(new WeeklyVotingSessionConfiguration());
+            // Votes
+            modelBuilder.ApplyConfiguration(new CoinVoteConfiguration());
+            modelBuilder.ApplyConfiguration(new VotingSessionConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinVotingSessionConfiguration());
 
             // Lookups
             modelBuilder.ApplyConfiguration(new TransactionTypeConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new VotingTypeConfiguration());
             
             // Identity
             modelBuilder.ApplyConfiguration(new RoleConfiguration());

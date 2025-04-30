@@ -1,6 +1,5 @@
 using AutoMapper;
 using MetaCoins.API.Dtos.UserDtos;
-using MetaCoins.API.Dtos.WalletDtos;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -80,8 +79,8 @@ namespace MetaCoins.API.Controllers
                     SameSite = SameSiteMode.Strict
                 });
 
-                // Return a 200 OK
-                return Ok(new {username = loginDto.Username});
+                // Return a 200 Ok 
+                return Ok(new {message = "Login successful"});
             }
             catch (ArgumentException ex)
             {
@@ -113,8 +112,8 @@ namespace MetaCoins.API.Controllers
                     registerDto.Password
                 );
 
-                // Return a 201 Created 
-                return Created();
+                // Return a 200 Ok 
+                return Ok(new {message = "User registered successfully"});
             }
             catch (ArgumentException ex)
             {

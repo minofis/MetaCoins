@@ -38,7 +38,6 @@ namespace MetaCoins.BLL.Services
         {
             return await _userManager.Users
                 .Include(u => u.Likes)
-                .Include(u => u.Votes)
                 .FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException($"User with ID {userId} not found.");
         }
