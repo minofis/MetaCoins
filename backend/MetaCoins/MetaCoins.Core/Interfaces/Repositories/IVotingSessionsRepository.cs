@@ -8,6 +8,9 @@ namespace MetaCoins.Core.Interfaces.Repositories
         Task<VotingSession> GetVotingSessionByIdAsync(Guid votingSessionId);
         Task CreateVotingSessionAsync(VotingSession votingSession);
         Task<bool> VotingSessionExistsAsync(Guid votingSessionId);
-        Task DeactivateExpiredVotingSessionsAsync();
+        Task UpdateVotingSessionAsync(VotingSession votingSession);
+        Task UpdateVotingSessionStatusAsync(Guid votingSessionId, bool status);
+        Task UpdateVotingSessionWinnerAsync(Guid votingSessionId, Guid winnerId);
+        Task AddCoinsToVotingSessionAsync(IEnumerable<CoinVotingSession> cvs);
     }
 }

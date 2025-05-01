@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Votes;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
@@ -32,98 +33,74 @@ namespace MetaCoins.BLL.Services
             return await _votingSessionsRepo.VotingSessionExistsAsync(votingSessionId);
         }
 
-        public async Task DeactivateExpiredVotingSessionsAsync()
+        public async Task DeactivateVotingSessionAsync(Guid votingSessionId)
         {
-            await _votingSessionsRepo.DeactivateExpiredVotingSessionsAsync();
+            await _votingSessionsRepo.UpdateVotingSessionStatusAsync(votingSessionId, false);
         }
-        public Task CreateVotingSessionAsync()
+
+        public async Task CreateVotingSessionAsync(
+            string title, 
+            int votingTypeId, 
+            DateTime endDate, 
+            List<Guid> coinIds, 
+            Guid? parentSessionId)
         {
-            throw new NotImplementedException();
-            /*
-            var query = new CoinQueryObject
-            {
-                SortBy = new List<CoinsSortOption>
-                {
-                    new() {Field = "likes", Descending = true},
-                    new() {Field = "createdAt", Descending = true}
-                },
-                PageNumber = 1,
-                PageSize = 8
-            };
-            
+            var now = DateTime.UtcNow;
 
-            var paginatedCoins = await _coinsService.GetAllCoinsAsync(query);
-
-            if (paginatedCoins.TotalItems < 8)
-            {
-                throw new ArgumentException("Not enough coins created for weekly voting");
-            }
-
-            var today = DateTime.UtcNow;
-            //if (await _context.DailyVotingSessions.AnyAsync(dvs => dvs.StartDate == today)) return;\
-
-            var weeklySession = new WeeklyVotingSession
+            var votingSession = new VotingSession
             {
                 Id = Guid.NewGuid(),
+                Title = title,
+                VotingTypeId = votingTypeId,
                 IsActive = true,
-                StartDate = today.Date.Add(new TimeSpan(0,0,0)),
-                EndDate = today.Date.AddDays(6).Add(new TimeSpan(23,59,59)),
+                StartDate = now,
+                EndDate = endDate,
+                ParentVotingSessionId = parentSessionId
             };
 
-            List<DailyVotingSession> dailySessions = new();
-            List<DailyVote> dailyVotes = new();
+            await _votingSessionsRepo.CreateVotingSessionAsync(votingSession);
 
-            for (var daysCount = 0; daysCount < 7; daysCount++)
+            if (parentSessionId.HasValue && parentSessionId != Guid.Empty)
             {
-                var dailySession = new DailyVotingSession
-                {
-                    Id = Guid.NewGuid(),
-                    IsActive = false,
-                    StartDate = today.Date.AddDays(daysCount),
-                    EndDate = today.Date.AddDays(daysCount).Add(new TimeSpan(23,59,59)),
-                    WeeklyVotingSessionId = weeklySession.Id
-                };
+                var parentSession = await _votingSessionsRepo.GetVotingSessionByIdAsync(parentSessionId.Value);
 
-                if (daysCount == 0)
-                {
-                    dailySession.IsActive = true;
-                }
+                parentSession.SubVotingSessions.Add(votingSession);
 
-                var dailyVote = new DailyVote
-                {
-                    Id = Guid.NewGuid(),
-                    DailyVotingSessionId = dailySession.Id,
-                };
-
-                if (daysCount < 4)
-                {
-                    dailyVote.Coins = paginatedCoins.Items.Skip(daysCount * 2).Take(2).ToList();
-                }
-                dailySession.DailyVoteId = dailyVote.Id;
-
-                dailySessions.Add(dailySession);
-                dailyVotes.Add(dailyVote);
+                await _votingSessionsRepo.UpdateVotingSessionAsync(parentSession);
             }
 
-            await _votesRepo.CreateWeeklySessionAsync(weeklySession, dailyVotes, dailySessions);
-            */
+            if (coinIds?.Any() == true)
+            {
+                await AddCoinsToVotingSessionAsync(votingSession.Id, coinIds);
+            }   
         }
-        public Task DetermineWinnerAsync()
+
+        public async Task DetermineWinnerAsync(Guid votingSessionId)
         {
-            throw new NotImplementedException();
-            /*
-            var dailySession = await _votesRepo.GetActiveDailySessionAsync();
+            var votingSession = await _votingSessionsRepo.GetVotingSessionByIdAsync(votingSessionId);
 
-            var coins = dailySession.DailyVote.Coins;
+            var coinVotes = votingSession.CoinVotes;
 
-            var winner = coins.MaxBy(c => c.VotesCount)
-                ?? throw new ArgumentException("There is no winner in the daily voting session");
+            var winnerId = coinVotes
+                .GroupBy(cv => cv.CoinId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
 
-            dailySession.WinnerId = winner.Id;
+            await _votingSessionsRepo.UpdateVotingSessionWinnerAsync(votingSessionId, winnerId);
+        }
 
-            await _votesRepo.SaveChangesAsync();
-            await _votesRepo.DeactivateExpiredDailySessionsAsync();
-            */
+        public async Task AddCoinsToVotingSessionAsync(Guid votingSessionId, IEnumerable<Guid> coinIds)
+        {
+            var coinVotingSessions = coinIds
+                .Select(coinId => new CoinVotingSession
+                {
+                    VotingSessionId = votingSessionId,
+                    CoinId = coinId
+                })
+                .ToList();
+
+            await _votingSessionsRepo.AddCoinsToVotingSessionAsync(coinVotingSessions);
         }
     }
 }

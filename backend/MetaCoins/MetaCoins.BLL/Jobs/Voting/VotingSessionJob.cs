@@ -12,12 +12,12 @@ namespace MetaCoins.BLL.Jobs.Voting
         }
         public async Task Execute(IJobExecutionContext context)
         {
-            await _votingSessionsService.DeactivateExpiredVotingSessionsAsync();
+            // await _votingSessionsService.DeactivateExpiredVotingSessionsAsync();
 
             // Logger
             Console.WriteLine("Expired daily voting sessions are deactivated successfully at " + DateTime.UtcNow);
 
-            await _votingSessionsService.DetermineWinnerAsync();
+            // await _votingSessionsService.DetermineWinnerAsync();
 
             // Logger
             Console.WriteLine("Result of daily voting session is calculated successfully at " + DateTime.UtcNow);

@@ -1,3 +1,4 @@
+using MetaCoins.API.Dtos.VotingDtos;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,45 @@ namespace MetaCoins.API.Controllers
         {
             _usersService = usersService;
             _coinVotesService = coinVotesService;
+        }
+
+        
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("by-session/{sessionId}")]
+        public async Task<ActionResult<List<CoinVoteResponseDto>>> GetCoinVotesByVotingSessionId(Guid sessionId)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                var coinVotes = await _coinVotesService.GetCoinVotesByVotingSessionIdAsync(sessionId);
+
+                var coinVoteDtos = coinVotes.Select(
+                    coinVote => new CoinVoteResponseDto
+                    {
+                        Id = coinVote.Id,
+                        UserId = coinVote.UserId,
+                        CoinId = coinVote.CoinId,
+                        VotingSessionId = coinVote.VotingSessionId,
+                        CreatedAt = coinVote.CreatedAt.ToString()
+                    }
+                );
+
+                return Ok(coinVoteDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
         }
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]

@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Votes;
 
 namespace MetaCoins.Core.Interfaces.Services
@@ -6,9 +7,10 @@ namespace MetaCoins.Core.Interfaces.Services
     {
         Task<List<VotingSession>> GetActiveVotingSessionsAsync();
         Task<VotingSession> GetVotingSessionByIdAsync(Guid votingSessionId);
-        Task CreateVotingSessionAsync();
+        Task CreateVotingSessionAsync(string title, int votingTypeId, DateTime endDate, List<Guid> coinIds, Guid? parentSessionId);
+        Task AddCoinsToVotingSessionAsync(Guid votingSessionId, IEnumerable<Guid> coinIds);
         Task<bool> VotingSessionExistsAsync(Guid votingSessionId);
-        Task DetermineWinnerAsync();
-        Task DeactivateExpiredVotingSessionsAsync();
+        Task DetermineWinnerAsync(Guid votingSessionId);
+        Task DeactivateVotingSessionAsync(Guid votingSessionId);
     }
 }

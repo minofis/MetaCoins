@@ -96,5 +96,94 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpPost]
+        public async Task<IActionResult> CreateVotingSession(VotingSessionRequestDto requestDto)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+
+            if (requestDto == null)
+            {
+                return BadRequest("Voting session data is required");
+            }
+            try
+            {
+                await _votingSessionsService.CreateVotingSessionAsync(
+                    requestDto.Title,
+                    requestDto.VotingTypeId,
+                    requestDto.EndDate,
+                    requestDto.CoinIds,
+                    requestDto.ParentVotingSessionId
+                );
+
+                return Ok("Voting session is created");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpPost("determine-winner/{id}")]
+        public async Task<IActionResult> DetermineWinner(Guid id)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                await _votingSessionsService.DetermineWinnerAsync(id);
+
+                return Ok("Voting session winner is determined");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpPut("deactivate-session/{id}")]
+        public async Task<IActionResult> DeactivateVotingSession(Guid id)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            try
+            {
+                await _votingSessionsService.DeactivateVotingSessionAsync(id);
+
+                return Ok("Voting session is deactivated");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
     }
 }

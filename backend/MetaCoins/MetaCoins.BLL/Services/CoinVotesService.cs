@@ -16,6 +16,15 @@ namespace MetaCoins.BLL.Services
             _votingSessionsService = votingSessionsService;
         }
 
+        public async Task<List<CoinVote>> GetCoinVotesByVotingSessionIdAsync(Guid votingSessionId)
+        {
+            var sessionExists = await _votingSessionsService.VotingSessionExistsAsync(votingSessionId);
+            if(!sessionExists)
+                throw new ArgumentException($"Voting session with ID {votingSessionId} does not exist.");
+
+            return await _coinVotesRepo.GetCoinVotesByVotingSessionIdAsync(votingSessionId);
+        }
+
         public async Task VoteCoinAsync(Guid votingSessionId, Guid userId, Guid coinId)
         {
             var userExists = await _usersService.UserExistsAsync(userId);

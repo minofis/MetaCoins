@@ -1,7 +1,10 @@
+using MetaCoins.Core.Entities.Votes;
+
 namespace MetaCoins.Core.Interfaces.Services
 {
     public interface ICoinVotesService
     {
+        Task<List<CoinVote>> GetCoinVotesByVotingSessionIdAsync(Guid votingSessionId);
         Task VoteCoinAsync(Guid votingSessionId, Guid userId, Guid coinId);
         Task UnvoteCoinAsync(Guid votingSessionId, Guid userId, Guid coinId);
         Task<bool> IsCoinVotedAsync(Guid votingSessionId, Guid userId, Guid coinId);

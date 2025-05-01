@@ -85,7 +85,7 @@ namespace MetaCoins.API.Controllers
                 await _coinsService.CreateCoinAsync(userId);
 
                 // Return a 200 Ok 
-                return Ok(new {message = "Coin created successfully"});
+                return Ok(new {message = "Coin is created successfully"});
             }
             catch (ArgumentException ex)
             {
