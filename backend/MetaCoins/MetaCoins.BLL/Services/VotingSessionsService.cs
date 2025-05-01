@@ -1,15 +1,18 @@
-using MetaCoins.Core.Entities;
+using MetaCoins.BLL.Jobs.Voting;
 using MetaCoins.Core.Entities.Votes;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
+using Quartz;
 
 namespace MetaCoins.BLL.Services
 {
     public class VotingSessionsService : IVotingSessionsService
     {
+        private readonly IScheduler _scheduler;
         private readonly IVotingSessionsRepository _votingSessionsRepo;
-        public VotingSessionsService(IVotingSessionsRepository votingSessionsRepo)
+        public VotingSessionsService(IVotingSessionsRepository votingSessionsRepo, IScheduler scheduler)
         {
+            _scheduler = scheduler;
             _votingSessionsRepo = votingSessionsRepo;
         }
         public async Task<List<VotingSession>> GetActiveVotingSessionsAsync()
@@ -60,6 +63,8 @@ namespace MetaCoins.BLL.Services
 
             await _votingSessionsRepo.CreateVotingSessionAsync(votingSession);
 
+            await ScheduleVotingSessionEndJob(votingSession);
+
             if (parentSessionId.HasValue && parentSessionId != Guid.Empty)
             {
                 var parentSession = await _votingSessionsRepo.GetVotingSessionByIdAsync(parentSessionId.Value);
@@ -72,7 +77,7 @@ namespace MetaCoins.BLL.Services
             if (coinIds?.Any() == true)
             {
                 await AddCoinsToVotingSessionAsync(votingSession.Id, coinIds);
-            }   
+            }
         }
 
         public async Task DetermineWinnerAsync(Guid votingSessionId)
@@ -101,6 +106,23 @@ namespace MetaCoins.BLL.Services
                 .ToList();
 
             await _votingSessionsRepo.AddCoinsToVotingSessionAsync(coinVotingSessions);
+        }
+
+        public async Task ScheduleVotingSessionEndJob(VotingSession votingSession)
+        {
+            var jobKey = new JobKey($"VotingSessionJob_{votingSession.Id}");
+
+            IJobDetail job = JobBuilder.Create<VotingSessionJob>()
+                .WithIdentity(jobKey)
+                .UsingJobData("VotingSessionId", votingSession.Id.ToString())
+                .Build();
+            
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity($"Trigger_{votingSession.Id}")
+                .StartAt(votingSession.EndDate)
+                .Build();
+
+            await _scheduler.ScheduleJob(job, trigger);
         }
     }
 }

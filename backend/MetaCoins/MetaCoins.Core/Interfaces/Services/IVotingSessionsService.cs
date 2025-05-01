@@ -12,5 +12,6 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<bool> VotingSessionExistsAsync(Guid votingSessionId);
         Task DetermineWinnerAsync(Guid votingSessionId);
         Task DeactivateVotingSessionAsync(Guid votingSessionId);
+        Task ScheduleVotingSessionEndJob(VotingSession votingSession);
     }
 }

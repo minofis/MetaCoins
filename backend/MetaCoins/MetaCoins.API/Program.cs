@@ -34,6 +34,11 @@ builder.Services.AddQuartz(q =>{
     QuartzJobScheduler.ConfigureQuartzJobs(q);
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+builder.Services.AddScoped(provider =>
+{
+    var schedulerFactory = provider.GetRequiredService<ISchedulerFactory>();
+    return schedulerFactory.GetScheduler().GetAwaiter().GetResult();
+});
 
 builder.Services.AddHttpContextAccessor();
 
