@@ -1,5 +1,6 @@
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Identity;
+using MetaCoins.Core.Entities.Lookups.Coin;
 using MetaCoins.Core.Entities.Lookups.Transaction;
 using MetaCoins.Core.Entities.Lookups.Votes;
 using MetaCoins.Core.Entities.Votes;
@@ -33,6 +34,7 @@ namespace MetaCoins.DAL.Data
         public DbSet<TransactionType> TransactionTypes { get; set; }
         public DbSet<TransactionStatus> TransactionStatuses { get; set; }
         public DbSet<VotingType> VotingTypes { get; set; }
+        public DbSet<CoinStatus> CoinStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +53,7 @@ namespace MetaCoins.DAL.Data
             modelBuilder.ApplyConfiguration(new TransactionTypeConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionStatusConfiguration());
             modelBuilder.ApplyConfiguration(new VotingTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinStatusConfiguration());
             
             // Identity
             modelBuilder.ApplyConfiguration(new RoleConfiguration());

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MetaCoins.Core.Entities.Lookups.Coin;
 using MetaCoins.Core.Entities.Votes;
 
 namespace MetaCoins.Core.Entities
@@ -7,6 +8,13 @@ namespace MetaCoins.Core.Entities
     {
         public Guid Id { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+
+        public int CoinStatusId { get; set; }
+        public CoinStatus CoinStatus { get; set; } = null!;
+
+        public string Prompt { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
         public Guid WalletId { get; set; }
         public Wallet Wallet { get; set; } = null!;

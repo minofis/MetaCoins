@@ -32,6 +32,12 @@ namespace MetaCoins.DAL.Data.Repositories
                 .FirstOrDefaultAsync(w => w.Id == walletId);
         }
 
+        public async Task<Wallet> GetWalletByUserIdAsync(Guid userId)
+        {
+            return await _context.Wallets
+                .FirstOrDefaultAsync(w => w.UserId == userId);
+        }
+
         public async Task<Wallet?> GetWalletByUsernameAsync(string username)
         {
             return await _context.Wallets

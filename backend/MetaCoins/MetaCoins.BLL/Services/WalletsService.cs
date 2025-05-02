@@ -66,39 +66,20 @@ namespace MetaCoins.BLL.Services
             return sentTransactions;
         }
 
-        public async Task<List<Coin>> GetWalletCoinsByIdAsync(Guid walletId)
-        {
-            // Get wallet by specificated ID
-            var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
-                ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
-
-            // Get coins of the wallet
-            var coins = wallet.Coins.ToList()
-                ?? throw new ArgumentException($"Coins of wallet with ID {walletId} not found.");
-
-            return coins;
-        }
-
         public async Task<Wallet> GetWalletByUsernameAsync(string username)
         {
-            // Get wallet by specificated username
             var wallet = await _walletsRepo.GetWalletByUsernameAsync(username)
-                ?? throw new ArgumentException($"User with username {username} not found.");
+                ?? throw new ArgumentException($"Wallet with username {username} not found.");
 
             return wallet;
         }
 
-        public async Task<List<Coin>> GetWalletCoinsByUsernameAsync(string username)
+        public async Task<Wallet> GetWalletByUserIdAsync(Guid userId)
         {
-            // Get wallet by specificated username
-            var wallet = await _walletsRepo.GetWalletByUsernameAsync(username)
-                ?? throw new ArgumentException($"Wallet with username {username} not found.");
+            var wallet = await _walletsRepo.GetWalletByUserIdAsync(userId)
+                ?? throw new ArgumentException($"Wallet with userId {userId} not found.");
 
-            // Get coins of the wallet
-            var coins = wallet.Coins.ToList()
-                ?? throw new ArgumentException($"Coins of wallet with username {username} not found.");
-
-            return coins;
+            return wallet;
         }
     }
 }

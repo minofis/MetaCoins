@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace MetaCoins.DAL.Migrations
+namespace MetaCoins.DAL.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -29,6 +29,20 @@ namespace MetaCoins.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CoinStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
                 {
@@ -47,7 +61,8 @@ namespace MetaCoins.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,7 +75,8 @@ namespace MetaCoins.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -160,6 +176,10 @@ namespace MetaCoins.DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    CoinStatusId = table.Column<int>(type: "integer", nullable: false),
+                    Prompt = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     WalletId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -167,6 +187,12 @@ namespace MetaCoins.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Coins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Coins_CoinStatuses_CoinStatusId",
+                        column: x => x.CoinStatusId,
+                        principalTable: "CoinStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Coins_Wallets_CreatorId",
                         column: x => x.CreatorId,
@@ -466,25 +492,35 @@ namespace MetaCoins.DAL.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "TransactionStatuses",
-                columns: new[] { "Id", "Name" },
+                table: "CoinStatuses",
+                columns: new[] { "Id", "Description", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Pending" },
-                    { 2, "Completed" },
-                    { 3, "Failed" }
+                    { 1, null, "Draft" },
+                    { 2, null, "Public" },
+                    { 3, null, "Deleted" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TransactionStatuses",
+                columns: new[] { "Id", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, "Pending" },
+                    { 2, null, "Completed" },
+                    { 3, null, "Failed" }
                 });
 
             migrationBuilder.InsertData(
                 table: "TransactionTypes",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Description", "Name" },
                 values: new object[,]
                 {
-                    { 1, "FundsTransfer" },
-                    { 2, "Charity" },
-                    { 3, "Salary" },
-                    { 4, "Topup" },
-                    { 5, "MobileService" }
+                    { 1, null, "FundsTransfer" },
+                    { 2, null, "Charity" },
+                    { 3, null, "Salary" },
+                    { 4, null, "Topup" },
+                    { 5, null, "MobileService" }
                 });
 
             migrationBuilder.InsertData(
@@ -555,6 +591,11 @@ namespace MetaCoins.DAL.Migrations
                 name: "IX_CoinOwnerRecords_WalletId",
                 table: "CoinOwnerRecords",
                 column: "WalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coins_CoinStatusId",
+                table: "Coins",
+                column: "CoinStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Coins_CreatorId",
@@ -693,6 +734,9 @@ namespace MetaCoins.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Profiles");
+
+            migrationBuilder.DropTable(
+                name: "CoinStatuses");
 
             migrationBuilder.DropTable(
                 name: "Wallets");

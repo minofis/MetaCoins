@@ -24,10 +24,9 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]
         [HttpGet]
-        public async Task<ActionResult<List<PaginatedResult<CoinResponseDto>>>> GetAllCoins([FromQuery] CoinQueryObject query)
+        public async Task<ActionResult<List<PaginatedResult<CoinResponseDto>>>> GetCoinsByQuery([FromQuery] CoinQueryObject query)
         {
-                // Get coins by query
-                var paginatedCoins = await _coinsService.GetAllCoinsAsync(query);
+                var paginatedCoins = await _coinsService.GetCoinsByQueryAsync(query);
 
                 var paginatedDto = new PaginatedResult<CoinResponseDto>
                 {
@@ -37,7 +36,6 @@ namespace MetaCoins.API.Controllers
                     PageSize = paginatedCoins.PageSize
                 };
 
-                // Return a 200 Ok response with the list of paginated coins
                 return Ok(paginatedDto);
         }
 
@@ -46,89 +44,125 @@ namespace MetaCoins.API.Controllers
         {
             try
             {
-                // Get coin by the specified ID
                 var coin = await _coinsService.GetCoinByIdAsync(id);
 
-                // Map the coin to response DTO
                 var coinDto = _mapper.Map<CoinResponseDto>(coin);
 
-                // Return a 200 Ok response with the coin
                 return Ok(coinDto);
             }
             catch (ArgumentException ex)
             {
-                // Return a 404 Not Found response with the error message
                 return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
-                // Return a 500 Internal Server Error with the error message
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpPost]
-        public async Task<IActionResult> CreateCoinByUserId()
+        public async Task<IActionResult> CreateCoin(CoinCreateRequestDto requestDto)
         {
-            // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is empty
             if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated.");
             }
             try
             {
-                // Create a coin
-                await _coinsService.CreateCoinAsync(userId);
+                await _coinsService.CreateCoinAsync(userId, requestDto.Prompt);
 
-                // Return a 200 Ok 
-                return Ok(new {message = "Coin is created successfully"});
+                return Ok(new {message = "Coin is created"});
             }
             catch (ArgumentException ex)
             {
-                // Return a 404 Not Found response with the error message
                 return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
-                // Return a 500 Internal Server Error with the error message
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
 
 
         [Authorize(Policy = "CustomerPolicy")]
-        [HttpGet("{id}/ownership-records")]
-        public async Task<ActionResult<List<CoinOwnerRecord>>> GetCoinOwnershipRecordsById(Guid id)
+        [HttpGet("{id}/owner-records")]
+        public async Task<ActionResult<List<CoinOwnerRecord>>> GetOwnershipRecordsByCoinId(Guid id)
         {
-            // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is empty
             if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }
             try
             {
-                var ownerRecords = await _coinsService.GetCoinOwnershipRecordsByIdAsync(id);
+                var ownerRecords = await _coinsService.GetOwnershipRecordsByCoinIdAsync(id);
 
                 var ownerRecordDtos = _mapper.Map<List<CoinOwnerRecordResponseDto>>(ownerRecords);
 
-                // Return a Ok response
                 return Ok(ownerRecordDtos);
             }
             catch (ArgumentException ex)
             {
-                // Return a 404 Not Found response with the error message
                 return NotFound(new {message = ex.Message});
             }
             catch(Exception ex)
             {
-                // Return a 500 Internal Server Error with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
+        [Authorize(Policy = "CustomerPolicy")]
+        [HttpPut("{id}/details")]
+        public async Task<IActionResult> UpdateCoinDetails(Guid id, CoinUpdateDetailsRequestDto requestDto)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated.");
+            }
+            try
+            {
+                await _coinsService.UpdateCoinDetailsAsync(userId, id, requestDto.Title, requestDto.Description);
+
+                return Ok(new {message = "Coin details are updated"});
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+
+        [Authorize(Policy = "CustomerPolicy")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateCoinStatus(Guid id, string status)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated.");
+            }
+            try
+            {
+                await _coinsService.UpdateCoinStatusAsync(userId, id, status);
+
+                return Ok(new {message = "Coin status is updated"});
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }

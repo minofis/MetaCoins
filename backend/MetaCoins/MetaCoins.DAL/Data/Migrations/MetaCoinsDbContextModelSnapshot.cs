@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MetaCoins.DAL.Migrations
+namespace MetaCoins.DAL.Data.Migrations
 {
     [DbContext(typeof(MetaCoinsDbContext))]
     partial class MetaCoinsDbContextModelSnapshot : ModelSnapshot
@@ -28,13 +28,28 @@ namespace MetaCoins.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CoinStatusId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Prompt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -42,6 +57,8 @@ namespace MetaCoins.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CoinStatusId");
 
                     b.HasIndex("CreatorId");
 
@@ -216,6 +233,43 @@ namespace MetaCoins.DAL.Migrations
                     b.ToTable("Likes");
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.Coin.CoinStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoinStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Draft"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Public"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Deleted"
+                        });
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.Transaction.TransactionStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -223,6 +277,9 @@ namespace MetaCoins.DAL.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -257,6 +314,9 @@ namespace MetaCoins.DAL.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -593,6 +653,12 @@ namespace MetaCoins.DAL.Migrations
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Coin", b =>
                 {
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.Coin.CoinStatus", "CoinStatus")
+                        .WithMany()
+                        .HasForeignKey("CoinStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MetaCoins.Core.Entities.Wallet", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
@@ -604,6 +670,8 @@ namespace MetaCoins.DAL.Migrations
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CoinStatus");
 
                     b.Navigation("Creator");
 
@@ -868,7 +936,8 @@ namespace MetaCoins.DAL.Migrations
 
                     b.Navigation("SentTransactions");
 
-                    b.Navigation("User");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

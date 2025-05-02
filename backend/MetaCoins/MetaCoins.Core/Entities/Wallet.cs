@@ -11,7 +11,7 @@ namespace MetaCoins.Core.Entities
         public ICollection<Coin> Coins { get; set; }
 
         public Guid UserId { get; set; }
-        public UserEntity? User { get; set; }
+        public UserEntity User { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; }
     }
