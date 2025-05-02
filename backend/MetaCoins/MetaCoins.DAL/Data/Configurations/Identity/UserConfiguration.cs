@@ -1,4 +1,3 @@
-using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -20,7 +19,8 @@ namespace MetaCoins.DAL.Data.Configurations.Identity
                         PasswordHash = "AQAAAAIAAYagAAAAEGK35bXYasW9FUAyaVxmN7XxMXukoxqbUZR0SeRjXKyT/6pmQ+sa32ptd0KLMmO66Q=="
                     }
                 );
-                */
+            */
+
             builder 
                 .HasOne(u => u.Wallet)
                 .WithOne(w => w.User)
@@ -37,9 +37,9 @@ namespace MetaCoins.DAL.Data.Configurations.Identity
                 .HasForeignKey(l => l.UserId);
 
             builder 
-                .HasMany(u => u.Votes)
-                .WithOne(v => v.User)
-                .HasForeignKey(v => v.UserId);
+                .HasMany(u => u.CoinVotes)
+                .WithOne(cv => cv.User)
+                .HasForeignKey(cv => cv.UserId);
         }
     }
 }

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace MetaCoins.DAL.Data.Migrations
+namespace MetaCoins.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -65,6 +65,20 @@ namespace MetaCoins.DAL.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TransactionTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VotingTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VotingTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,6 +148,33 @@ namespace MetaCoins.DAL.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Wallets_WalletId",
+                        column: x => x.WalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Coins",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    WalletId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Coins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Coins_Wallets_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Coins_Wallets_WalletId",
                         column: x => x.WalletId,
                         principalTable: "Wallets",
                         principalColumn: "Id",
@@ -238,35 +279,13 @@ namespace MetaCoins.DAL.Data.Migrations
                 {
                     table.PrimaryKey("PK_CoinOwnerRecords", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_CoinOwnerRecords_Coins_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_CoinOwnerRecords_Wallets_WalletId",
-                        column: x => x.WalletId,
-                        principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Coins",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ImageUrl = table.Column<string>(type: "text", nullable: false),
-                    WalletId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DailyVoteId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Coins", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Coins_Wallets_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Coins_Wallets_WalletId",
                         column: x => x.WalletId,
                         principalTable: "Wallets",
                         principalColumn: "Id",
@@ -347,100 +366,92 @@ namespace MetaCoins.DAL.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WeeklyVotingSessions",
+                name: "VotingSessions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    VotingTypeId = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ParentVotingSessionId = table.Column<Guid>(type: "uuid", nullable: true),
                     WinnerId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeeklyVotingSessions", x => x.Id);
+                    table.PrimaryKey("PK_VotingSessions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WeeklyVotingSessions_Coins_WinnerId",
-                        column: x => x.WinnerId,
-                        principalTable: "Coins",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DailyVotingSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    WeeklyVotingSessionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DailyVoteId = table.Column<Guid>(type: "uuid", nullable: false),
-                    WinnerId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DailyVotingSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DailyVotingSessions_Coins_WinnerId",
+                        name: "FK_VotingSessions_Coins_WinnerId",
                         column: x => x.WinnerId,
                         principalTable: "Coins",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_DailyVotingSessions_WeeklyVotingSessions_WeeklyVotingSessio~",
-                        column: x => x.WeeklyVotingSessionId,
-                        principalTable: "WeeklyVotingSessions",
+                        name: "FK_VotingSessions_VotingSessions_ParentVotingSessionId",
+                        column: x => x.ParentVotingSessionId,
+                        principalTable: "VotingSessions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VotingSessions_VotingTypes_VotingTypeId",
+                        column: x => x.VotingTypeId,
+                        principalTable: "VotingTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DailyVotes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DailyVotingSessionId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DailyVotes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DailyVotes_DailyVotingSessions_DailyVotingSessionId",
-                        column: x => x.DailyVotingSessionId,
-                        principalTable: "DailyVotingSessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Votes",
+                name: "CoinVotes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CoinId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DailyVotingSessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VotingSessionId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Votes", x => x.Id);
+                    table.PrimaryKey("PK_CoinVotes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Votes_AspNetUsers_UserId",
+                        name: "FK_CoinVotes_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Votes_Coins_CoinId",
+                        name: "FK_CoinVotes_Coins_CoinId",
                         column: x => x.CoinId,
                         principalTable: "Coins",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Votes_DailyVotingSessions_DailyVotingSessionId",
-                        column: x => x.DailyVotingSessionId,
-                        principalTable: "DailyVotingSessions",
+                        name: "FK_CoinVotes_VotingSessions_VotingSessionId",
+                        column: x => x.VotingSessionId,
+                        principalTable: "VotingSessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoinVotingSessions",
+                columns: table => new
+                {
+                    CoinId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VotingSessionId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinVotingSessions", x => new { x.CoinId, x.VotingSessionId });
+                    table.ForeignKey(
+                        name: "FK_CoinVotingSessions_Coins_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinVotingSessions_VotingSessions_VotingSessionId",
+                        column: x => x.VotingSessionId,
+                        principalTable: "VotingSessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -474,6 +485,16 @@ namespace MetaCoins.DAL.Data.Migrations
                     { 3, "Salary" },
                     { 4, "Topup" },
                     { 5, "MobileService" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "VotingTypes",
+                columns: new[] { "Id", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, "Daily" },
+                    { 2, null, "Weekly" },
+                    { 3, null, "Custom" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -541,30 +562,29 @@ namespace MetaCoins.DAL.Data.Migrations
                 column: "CreatorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Coins_DailyVoteId",
-                table: "Coins",
-                column: "DailyVoteId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Coins_WalletId",
                 table: "Coins",
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DailyVotes_DailyVotingSessionId",
-                table: "DailyVotes",
-                column: "DailyVotingSessionId",
-                unique: true);
+                name: "IX_CoinVotes_CoinId",
+                table: "CoinVotes",
+                column: "CoinId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DailyVotingSessions_WeeklyVotingSessionId",
-                table: "DailyVotingSessions",
-                column: "WeeklyVotingSessionId");
+                name: "IX_CoinVotes_UserId",
+                table: "CoinVotes",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DailyVotingSessions_WinnerId",
-                table: "DailyVotingSessions",
-                column: "WinnerId");
+                name: "IX_CoinVotes_VotingSessionId",
+                table: "CoinVotes",
+                column: "VotingSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinVotingSessions_VotingSessionId",
+                table: "CoinVotingSessions",
+                column: "VotingSessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_CoinId",
@@ -602,60 +622,24 @@ namespace MetaCoins.DAL.Data.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votes_CoinId",
-                table: "Votes",
-                column: "CoinId");
+                name: "IX_VotingSessions_ParentVotingSessionId",
+                table: "VotingSessions",
+                column: "ParentVotingSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votes_DailyVotingSessionId",
-                table: "Votes",
-                column: "DailyVotingSessionId");
+                name: "IX_VotingSessions_VotingTypeId",
+                table: "VotingSessions",
+                column: "VotingTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votes_UserId",
-                table: "Votes",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WeeklyVotingSessions_WinnerId",
-                table: "WeeklyVotingSessions",
+                name: "IX_VotingSessions_WinnerId",
+                table: "VotingSessions",
                 column: "WinnerId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_CoinOwnerRecords_Coins_CoinId",
-                table: "CoinOwnerRecords",
-                column: "CoinId",
-                principalTable: "Coins",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Coins_DailyVotes_DailyVoteId",
-                table: "Coins",
-                column: "DailyVoteId",
-                principalTable: "DailyVotes",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Coins_Wallets_CreatorId",
-                table: "Coins");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Coins_Wallets_WalletId",
-                table: "Coins");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_DailyVotingSessions_Coins_WinnerId",
-                table: "DailyVotingSessions");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_WeeklyVotingSessions_Coins_WinnerId",
-                table: "WeeklyVotingSessions");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -675,16 +659,25 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "CoinOwnerRecords");
 
             migrationBuilder.DropTable(
+                name: "CoinVotes");
+
+            migrationBuilder.DropTable(
+                name: "CoinVotingSessions");
+
+            migrationBuilder.DropTable(
                 name: "Likes");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
-                name: "Votes");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "VotingSessions");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "TransactionStatuses");
@@ -693,25 +686,16 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "TransactionTypes");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Coins");
+
+            migrationBuilder.DropTable(
+                name: "VotingTypes");
 
             migrationBuilder.DropTable(
                 name: "Profiles");
 
             migrationBuilder.DropTable(
                 name: "Wallets");
-
-            migrationBuilder.DropTable(
-                name: "Coins");
-
-            migrationBuilder.DropTable(
-                name: "DailyVotes");
-
-            migrationBuilder.DropTable(
-                name: "DailyVotingSessions");
-
-            migrationBuilder.DropTable(
-                name: "WeeklyVotingSessions");
         }
     }
 }
