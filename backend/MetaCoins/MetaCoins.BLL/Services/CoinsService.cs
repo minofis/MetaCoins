@@ -1,4 +1,5 @@
 using MetaCoins.Core.Entities;
+using MetaCoins.Core.Entities.Enums.Coin;
 using MetaCoins.Core.Entities.Helpers;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
@@ -18,7 +19,7 @@ namespace MetaCoins.BLL.Services
             _walletsService = walletsService;
             _usersService = usersService;
         }
-        public async Task CreateCoinAsync(Guid userId)
+        public async Task CreateCoinAsync(Guid userId, string prompt)
         {
             var user = await _usersService.GetUserByIdAsync(userId);
             var wallet = await _walletsService.GetWalletByUsernameAsync(user.UserName);
@@ -26,7 +27,8 @@ namespace MetaCoins.BLL.Services
             var coin = new Coin
             {
                 Id = Guid.NewGuid(),
-                ImageUrl = string.Empty,
+                Prompt = prompt,
+                CoinStatusId = 1,
                 WalletId = wallet.Id,
                 CreatorId = wallet.Id,
                 CreatedAt = DateTime.Now.ToUniversalTime(),
@@ -44,10 +46,10 @@ namespace MetaCoins.BLL.Services
             coin.OwnershipRecords.Add(ownerRecord);
             coin.ImageUrl = await _imageService.GenerateImage();
 
-            await _coinsRepo.SaveChangesAsync();
+            await _coinsRepo.UpdateCoinAsync(coin);
         }
 
-        public async Task<PaginatedResult<Coin>> GetAllCoinsAsync(CoinQueryObject query)
+        public async Task<PaginatedResult<Coin>> GetCoinsByQueryAsync(CoinQueryObject query)
         {
             var coins = await _coinsRepo.GetAllCoinsAsync();
 
@@ -111,15 +113,53 @@ namespace MetaCoins.BLL.Services
             return coin;
         }
 
-        public async Task<List<CoinOwnerRecord>> GetCoinOwnershipRecordsByIdAsync(Guid coinId)
+        public async Task<List<CoinOwnerRecord>> GetOwnershipRecordsByCoinIdAsync(Guid coinId)
         {
-            var coin = await _coinsRepo.GetCoinByIdAsync(coinId)
-                ?? throw new ArgumentException($"Coin with ID {coinId} not found.");;
+            return await _coinsRepo.GetOwnerRecordsByCoinIdAsync(coinId) ?? new List<CoinOwnerRecord>();
+        }
 
-            var ownerRecords = coin.OwnershipRecords.OrderBy(o => o.AcquiredAt).ToList()
-                ?? throw new ArgumentException($"There are no any ownership records.");
+        public async Task UpdateCoinDetailsAsync(Guid userId, Guid coinId, string? title, string? description)
+        {
+            var coin = await GetCoinByIdAsync(coinId);
 
-            return ownerRecords;
+            if (coin.Wallet.UserId != userId)
+            {
+                throw new ArgumentException($"This user does not have a coin with ID {coinId}");
+            }
+
+            if(coin.CoinStatusId == (int)CoinStatuses.Deleted)
+            {
+                throw new ArgumentException($"Coin with ID {coinId} is deleted");
+            }
+            
+            coin.Title = title ?? coin.Title;
+            coin.Description = description ?? coin.Description;
+            await _coinsRepo.UpdateCoinAsync(coin);
+        }
+
+        public async Task UpdateCoinStatusAsync(Guid userId, Guid coinId, string status)
+        {
+            if (!Enum.TryParse<CoinStatuses>(status, true, out var newStatus))
+            {
+                throw new ArgumentException($"Invalid coin status: {status}");
+            }
+
+            var coin = await GetCoinByIdAsync(coinId);
+
+            if (coin.Wallet.UserId != userId)
+            {
+                throw new ArgumentException($"This user does not have a coin with ID {coinId}");
+            }
+
+            if (coin.CoinStatusId == (int)newStatus)
+            {
+                throw new ArgumentException($"Coin with ID {coinId} is already with status {newStatus}");
+            } else if(coin.CoinStatusId == (int)CoinStatuses.Deleted)
+            {
+                throw new ArgumentException($"Coin with ID {coinId} is deleted");
+            }
+
+            await _coinsRepo.UpdateCoinStatusAsync(coin.Id, (int)newStatus);
         }
     }
 }

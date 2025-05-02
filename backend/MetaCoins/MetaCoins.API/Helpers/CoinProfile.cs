@@ -9,6 +9,7 @@ namespace MetaCoins.API.Helpers
         public CoinProfile()
         {
             CreateMap<Coin, CoinResponseDto>()
+                .ForMember(t => t.CoinStatus, o => o.MapFrom(s => s.CoinStatus.Name))
                 .ForMember(t => t.OwnerUsername, o => o.MapFrom(s => s.Wallet.User.UserName))
                 .ForMember(t => t.CreatorUsername, o => o.MapFrom(s => s.Creator.User.UserName))
                 .ForMember(t => t.CreatedAt, o => o.MapFrom(s => s.CreatedAt.ToString()))

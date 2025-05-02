@@ -6,8 +6,11 @@ namespace MetaCoins.Core.Interfaces.Repositories
     {
         Task<List<Coin>> GetAllCoinsAsync();
         Task<Coin> GetCoinByIdAsync(Guid coinId);
-        Task CreateCoinAsync(Coin coin);
+        Task<List<CoinOwnerRecord>> GetOwnerRecordsByCoinIdAsync(Guid coinId);
+        Task UpdateCoinStatusAsync(Guid coinId, int statusId);
         Task CreateCoinOwnerRecordAsync(CoinOwnerRecord ownerRecord);
-        Task SaveChangesAsync();
+        Task<List<Coin>> GetCoinsByUsernameAsync(string username);
+        Task CreateCoinAsync(Coin coin);
+        Task UpdateCoinAsync(Coin coin);
     }
 }
