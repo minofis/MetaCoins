@@ -1,6 +1,6 @@
-namespace MetaCoins.Core.Entities.Lookups.Transaction
+namespace MetaCoins.Core.Entities.Lookups.CoinTransaction
 {
-    public class TransactionType
+    public class CoinTransactionType
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

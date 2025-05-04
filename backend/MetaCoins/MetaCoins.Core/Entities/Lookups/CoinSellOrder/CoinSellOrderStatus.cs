@@ -1,6 +1,6 @@
-namespace MetaCoins.Core.Entities.Lookups.Transaction
+namespace MetaCoins.Core.Entities.Lookups.CoinSellOrder
 {
-    public class TransactionStatus
+    public class CoinSellOrderStatus
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
