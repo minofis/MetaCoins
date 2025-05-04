@@ -65,6 +65,11 @@ namespace MetaCoins.BLL.Services
                 queryCoins = queryCoins.Where(c => c.Wallet.User.UserName.Contains(query.Username));
             }
 
+            if (!string.IsNullOrEmpty(query.Title))
+            {
+                queryCoins = queryCoins.Where(c => c.Title.Contains(query.Title));
+            }
+
             IOrderedQueryable<Coin>? orderedQuery = null;
             foreach(var sort in query.SortBy)
             {

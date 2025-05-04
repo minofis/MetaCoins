@@ -2,6 +2,7 @@ namespace MetaCoins.Core.Entities.Helpers
 {
     public class CoinQueryObject
     {
+        public string Title { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public List<CoinsSortOption> SortBy { get; set; } = new();
         public int PageNumber { get; set; } = 1;
