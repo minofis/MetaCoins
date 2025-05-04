@@ -1,7 +1,6 @@
 using AutoMapper;
-using MetaCoins.API.Dtos.TransactionDtos;
+using MetaCoins.API.Dtos.CoinTransactionDtos;
 using MetaCoins.API.Dtos.WalletDtos;
-using MetaCoins.Core.Entities;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -161,19 +160,16 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/sent-transactions")]
-        public async Task<ActionResult<List<Transaction>>> GetSentTransactions(Guid id)
+        public async Task<ActionResult<List<CoinTransactionResponseDto>>> GetSentTransactions(Guid id)
         {
-            // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
 
-            // Check if userId is empty
             if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
             }
             try
             {
-                // Get wallet by the specified ID
                 var wallet = await _walletsService.GetWalletByIdAsync(id);
 
                 if (wallet.UserId != userId)
@@ -181,30 +177,37 @@ namespace MetaCoins.API.Controllers
                     return Forbid("Bearer");
                 }
 
-                // Get sent transactions associated with the specified bank card ID
-                var transactions = await _walletsService.GetSentTransactionsByIdAsync(id);
+                var coinTransactions = await _walletsService.GetSentTransactionsByIdAsync(id);
 
-                // Map the transactions to a list of response DTOs
-                var transactionDtos = _mapper.Map<List<TransactionResponseDto>>(transactions);
+                var coinTransactionDtos = coinTransactions.Select(ct => new CoinTransactionResponseDto
+                {
+                    Id = ct.Id,
+                    Type = ct.Type.Name,
+                    Status = ct.Status.Name,
+                    CoinId = ct.CoinId,
+                    SenderWalletId = ct.SenderWalletId,
+                    RecipientWalletId = ct.RecipientWalletId,
+                    CoinSellOrderId = ct.CoinSellOrderId,
+                    CreatedAt = ct.CreatedAt.ToString(),
+                    UpdatedAt = ct.UpdatedAt.ToString(),
+                    CompletedAt = ct.CompletedAt.ToString(),
+                }).ToList();
 
-                // Return a 200 Ok response with the list of sent transactions
-                return Ok(transactionDtos);
+                return Ok(coinTransactionDtos);
             }
             catch (ArgumentException ex)
             {
-                // Return a 404 Not Found response with the error message
                 return NotFound(ex.Message);
             }
             catch(Exception ex)
             {
-                // Return a 500 Internal Server Error with the error message
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/recived-transactions")]
-        public async Task<ActionResult<List<Transaction>>> GetRecivedTransactions(Guid id)
+        public async Task<ActionResult<List<CoinTransactionResponseDto>>> GetRecivedTransactions(Guid id)
         {
             // Get user id from the current user
             var userId = await _usersService.GetCurrentUserIdAsync();
@@ -216,7 +219,6 @@ namespace MetaCoins.API.Controllers
             }
             try
             {
-                // Get wallet by the specified ID
                 var wallet = await _walletsService.GetWalletByIdAsync(id);
 
                 if (wallet.UserId != userId)
@@ -224,23 +226,30 @@ namespace MetaCoins.API.Controllers
                     return Forbid("Bearer");
                 }
 
-                // Get recived transactions associated with the specified bank card ID
-                var transactions = await _walletsService.GetRecivedTransactionsByIdAsync(id);
+                var coinTransactions = await _walletsService.GetRecivedTransactionsByIdAsync(id);
 
-                // Map the transactions to a list of response DTOs
-                var transactionDtos = _mapper.Map<List<TransactionResponseDto>>(transactions);
+                var coinTransactionDtos = coinTransactions.Select(ct => new CoinTransactionResponseDto
+                {
+                    Id = ct.Id,
+                    Type = ct.Type.Name,
+                    Status = ct.Status.Name,
+                    CoinId = ct.CoinId,
+                    SenderWalletId = ct.SenderWalletId,
+                    RecipientWalletId = ct.RecipientWalletId,
+                    CoinSellOrderId = ct.CoinSellOrderId,
+                    CreatedAt = ct.CreatedAt.ToString(),
+                    UpdatedAt = ct.UpdatedAt.ToString(),
+                    CompletedAt = ct.CompletedAt.ToString(),
+                }).ToList();
 
-                // Return a 200 Ok response with the list of sent transactions
-                return Ok(transactionDtos);
+                return Ok(coinTransactionDtos);
             }
             catch (ArgumentException ex)
             {
-                // Return a 404 Not Found response with the error message
                 return NotFound(ex.Message);
             }
             catch(Exception ex)
             {
-                // Return a 500 Internal Server Error with the error message
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }

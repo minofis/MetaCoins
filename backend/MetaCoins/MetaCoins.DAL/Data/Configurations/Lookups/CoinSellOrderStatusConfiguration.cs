@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities.Enums.CoinSellOrder;
 using MetaCoins.Core.Entities.Lookups.CoinSellOrder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,9 +11,13 @@ namespace MetaCoins.DAL.Data.Configurations.Lookups
         {
             builder
                 .HasData(
-                    new CoinSellOrderStatus{Id = 1, Name = "Active"},
-                    new CoinSellOrderStatus{Id = 2, Name = "Completed"},
-                    new CoinSellOrderStatus{Id = 3, Name = "Cancelled"}
+                    Enum.GetValues(typeof(CoinSellOrderStatuses))
+                        .Cast<CoinSellOrderStatuses>()
+                        .Select(e => new CoinSellOrderStatus
+                        {
+                            Id = (int)e,
+                            Name = e.ToString()
+                        })
                 );
         }
     }

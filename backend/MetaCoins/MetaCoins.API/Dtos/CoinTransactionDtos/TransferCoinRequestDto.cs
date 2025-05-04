@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MetaCoins.API.Dtos.TransactionDtos
+namespace MetaCoins.API.Dtos.CoinTransactionDtos
 {
-    public class TransactionCreateRequestDto
+    public class TransferCoinRequestDto
     {
-        [Required]
-        public string SenderUsername { get; set; } = string.Empty;
         [Required]
         public string RecipientUsername { get; set; } = string.Empty;
         [Required]

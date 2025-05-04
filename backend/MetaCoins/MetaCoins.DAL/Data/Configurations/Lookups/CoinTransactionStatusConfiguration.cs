@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities.Enums.CoinTransaction;
 using MetaCoins.Core.Entities.Lookups.CoinTransaction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,9 +11,13 @@ namespace MetaCoins.DAL.Data.Configurations.Lookups
         {
             builder
                 .HasData(
-                    new CoinTransactionStatus{Id = 1, Name = "Pending"},
-                    new CoinTransactionStatus{Id = 2, Name = "Completed"},
-                    new CoinTransactionStatus{Id = 3, Name = "Failed"}
+                    Enum.GetValues(typeof(CoinTransactionStatuses))
+                        .Cast<CoinTransactionStatuses>()
+                        .Select(e => new CoinTransactionStatus
+                        {
+                            Id = (int)e,
+                            Name = e.ToString()
+                        })
                 );
         }
     }

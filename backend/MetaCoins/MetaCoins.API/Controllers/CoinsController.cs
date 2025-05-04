@@ -99,7 +99,7 @@ namespace MetaCoins.API.Controllers
             }
             try
             {
-                var ownerRecords = await _coinsService.GetOwnershipRecordsByCoinIdAsync(id);
+                var ownerRecords = await _coinsService.GetOwnerRecordsByCoinIdAsync(id);
 
                 var ownerRecordDtos = _mapper.Map<List<CoinOwnerRecordResponseDto>>(ownerRecords);
 

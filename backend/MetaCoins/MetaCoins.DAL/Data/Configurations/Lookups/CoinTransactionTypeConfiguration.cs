@@ -1,3 +1,4 @@
+using MetaCoins.Core.Entities.Enums.CoinTransaction;
 using MetaCoins.Core.Entities.Lookups.CoinTransaction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,8 +11,13 @@ namespace MetaCoins.DAL.Data.Configurations.Lookups
         {
             builder
                 .HasData(
-                    new CoinTransactionType{Id = 1, Name = "Transfer"},
-                    new CoinTransactionType{Id = 2, Name = "Sale"}
+                    Enum.GetValues(typeof(CoinTransactionTypes))
+                        .Cast<CoinTransactionTypes>()
+                        .Select(e => new CoinTransactionType
+                        {
+                            Id = (int)e,
+                            Name = e.ToString()
+                        })
                 );
         }
     }

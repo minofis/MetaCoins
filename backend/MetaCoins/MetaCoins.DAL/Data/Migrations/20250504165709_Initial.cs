@@ -29,17 +29,55 @@ namespace MetaCoins.DAL.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CoinSellOrderStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinSellOrderStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CoinStatuses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CoinStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoinTransactionStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinTransactionStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoinTransactionTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinTransactionTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,41 +94,12 @@ namespace MetaCoins.DAL.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TransactionStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransactionStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransactionTypes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransactionTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "VotingTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -319,6 +328,42 @@ namespace MetaCoins.DAL.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CoinSellOrders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StatusId = table.Column<int>(type: "integer", nullable: false),
+                    SellerWalletId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CoinId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinSellOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CoinSellOrders_CoinSellOrderStatuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "CoinSellOrderStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinSellOrders_Coins_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinSellOrders_Wallets_SellerWalletId",
+                        column: x => x.SellerWalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -340,53 +385,6 @@ namespace MetaCoins.DAL.Data.Migrations
                         name: "FK_Likes_Coins_CoinId",
                         column: x => x.CoinId,
                         principalTable: "Coins",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Transactions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TypeId = table.Column<int>(type: "integer", nullable: false),
-                    StatusId = table.Column<int>(type: "integer", nullable: false),
-                    CoinId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SenderWalletId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecipientWalletId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Transactions_Coins_CoinId",
-                        column: x => x.CoinId,
-                        principalTable: "Coins",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_TransactionStatuses_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "TransactionStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_TransactionTypes_TypeId",
-                        column: x => x.TypeId,
-                        principalTable: "TransactionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_Wallets_RecipientWalletId",
-                        column: x => x.RecipientWalletId,
-                        principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_Wallets_SenderWalletId",
-                        column: x => x.SenderWalletId,
-                        principalTable: "Wallets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -423,6 +421,59 @@ namespace MetaCoins.DAL.Data.Migrations
                         principalTable: "VotingTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoinTransactions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TypeId = table.Column<int>(type: "integer", nullable: false),
+                    StatusId = table.Column<int>(type: "integer", nullable: false),
+                    CoinId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CoinSellOrderId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SenderWalletId = table.Column<Guid>(type: "uuid", nullable: true),
+                    RecipientWalletId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoinTransactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_CoinSellOrders_CoinSellOrderId",
+                        column: x => x.CoinSellOrderId,
+                        principalTable: "CoinSellOrders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_CoinTransactionStatuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "CoinTransactionStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_CoinTransactionTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "CoinTransactionTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_Coins_CoinId",
+                        column: x => x.CoinId,
+                        principalTable: "Coins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_Wallets_RecipientWalletId",
+                        column: x => x.RecipientWalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CoinTransactions_Wallets_SenderWalletId",
+                        column: x => x.SenderWalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -492,45 +543,52 @@ namespace MetaCoins.DAL.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "CoinSellOrderStatuses",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Active" },
+                    { 2, "Completed" },
+                    { 3, "Cancelled" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "CoinStatuses",
-                columns: new[] { "Id", "Description", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, "Draft" },
-                    { 2, null, "Public" },
-                    { 3, null, "Deleted" }
+                    { 1, "Draft" },
+                    { 2, "Public" },
+                    { 3, "Deleted" }
                 });
 
             migrationBuilder.InsertData(
-                table: "TransactionStatuses",
-                columns: new[] { "Id", "Description", "Name" },
+                table: "CoinTransactionStatuses",
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, "Pending" },
-                    { 2, null, "Completed" },
-                    { 3, null, "Failed" }
+                    { 1, "Pending" },
+                    { 2, "Completed" },
+                    { 3, "Failed" }
                 });
 
             migrationBuilder.InsertData(
-                table: "TransactionTypes",
-                columns: new[] { "Id", "Description", "Name" },
+                table: "CoinTransactionTypes",
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, "FundsTransfer" },
-                    { 2, null, "Charity" },
-                    { 3, null, "Salary" },
-                    { 4, null, "Topup" },
-                    { 5, null, "MobileService" }
+                    { 1, "Transfer" },
+                    { 2, "Sale" }
                 });
 
             migrationBuilder.InsertData(
                 table: "VotingTypes",
-                columns: new[] { "Id", "Description", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, "Daily" },
-                    { 2, null, "Weekly" },
-                    { 3, null, "Custom" }
+                    { 1, "Daily" },
+                    { 2, "Weekly" },
+                    { 3, "Custom" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -608,6 +666,51 @@ namespace MetaCoins.DAL.Data.Migrations
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CoinSellOrders_CoinId",
+                table: "CoinSellOrders",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinSellOrders_SellerWalletId",
+                table: "CoinSellOrders",
+                column: "SellerWalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinSellOrders_StatusId",
+                table: "CoinSellOrders",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_CoinId",
+                table: "CoinTransactions",
+                column: "CoinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_CoinSellOrderId",
+                table: "CoinTransactions",
+                column: "CoinSellOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_RecipientWalletId",
+                table: "CoinTransactions",
+                column: "RecipientWalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_SenderWalletId",
+                table: "CoinTransactions",
+                column: "SenderWalletId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_StatusId",
+                table: "CoinTransactions",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoinTransactions_TypeId",
+                table: "CoinTransactions",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CoinVotes_CoinId",
                 table: "CoinVotes",
                 column: "CoinId");
@@ -636,31 +739,6 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "IX_Likes_UserId",
                 table: "Likes",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_CoinId",
-                table: "Transactions",
-                column: "CoinId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_RecipientWalletId",
-                table: "Transactions",
-                column: "RecipientWalletId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_SenderWalletId",
-                table: "Transactions",
-                column: "SenderWalletId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_StatusId",
-                table: "Transactions",
-                column: "StatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_TypeId",
-                table: "Transactions",
-                column: "TypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VotingSessions_ParentVotingSessionId",
@@ -700,6 +778,9 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "CoinOwnerRecords");
 
             migrationBuilder.DropTable(
+                name: "CoinTransactions");
+
+            migrationBuilder.DropTable(
                 name: "CoinVotes");
 
             migrationBuilder.DropTable(
@@ -709,10 +790,16 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "CoinSellOrders");
+
+            migrationBuilder.DropTable(
+                name: "CoinTransactionStatuses");
+
+            migrationBuilder.DropTable(
+                name: "CoinTransactionTypes");
 
             migrationBuilder.DropTable(
                 name: "VotingSessions");
@@ -721,10 +808,7 @@ namespace MetaCoins.DAL.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "TransactionStatuses");
-
-            migrationBuilder.DropTable(
-                name: "TransactionTypes");
+                name: "CoinSellOrderStatuses");
 
             migrationBuilder.DropTable(
                 name: "Coins");

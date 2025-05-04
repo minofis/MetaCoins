@@ -8,8 +8,8 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<Wallet> GetWalletByIdAsync(Guid walletId);
         Task<Wallet> GetWalletByUsernameAsync(string username);
         Task<Wallet> GetWalletByUserIdAsync(Guid userId);
-        Task<List<Transaction>> GetRecivedTransactionsByIdAsync(Guid walletId);
-        Task<List<Transaction>> GetSentTransactionsByIdAsync(Guid walletId);
+        Task<List<CoinTransaction>> GetRecivedTransactionsByIdAsync(Guid walletId);
+        Task<List<CoinTransaction>> GetSentTransactionsByIdAsync(Guid walletId);
         Task CreateWalletAsync(Guid walletId, Guid userId);
     }
 }
