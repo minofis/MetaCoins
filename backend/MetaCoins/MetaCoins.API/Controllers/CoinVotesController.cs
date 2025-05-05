@@ -17,8 +17,6 @@ namespace MetaCoins.API.Controllers
             _coinVotesService = coinVotesService;
         }
 
-        
-
         [Authorize(Policy = "AdminOrCustomerPolicy")]
         [HttpGet("by-session/{sessionId}")]
         public async Task<ActionResult<List<CoinVoteResponseDto>>> GetCoinVotesByVotingSessionId(Guid sessionId)

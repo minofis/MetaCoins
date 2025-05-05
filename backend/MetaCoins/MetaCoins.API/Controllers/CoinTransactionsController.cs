@@ -16,6 +16,102 @@ namespace MetaCoins.API.Controllers
             _coinTransactionsService = coinTransactionsService;
             _usersService = usersService;
         }
+        
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("my-sent-transactions")]
+        public async Task<ActionResult<CoinTransactionResponseDto>> GetMySentCoinTransactions()
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+
+            var isUserExists = await _usersService.UserExistsAsync(userId);
+
+            if (!isUserExists)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+
+            try
+            {
+                var coinTransactions = await _coinTransactionsService.GetSentCoinTransactionsAsync(userId);
+
+                var coinTransactionDtos = coinTransactions.Select(ct => new CoinTransactionResponseDto
+                {
+                    Id = ct.Id,
+                    Type = ct.Type.Name,
+                    Status = ct.Status.Name,
+                    CoinId = ct.CoinId,
+                    SenderWalletId = ct.SenderWalletId,
+                    RecipientWalletId = ct.RecipientWalletId,
+                    CoinSellOrderId = ct.CoinSellOrderId,
+                    CreatedAt = ct.CreatedAt.ToString(),
+                    UpdatedAt = ct.UpdatedAt.ToString(),
+                    CompletedAt = ct.CompletedAt.ToString(),
+                }).ToList();
+                
+                return Ok(coinTransactionDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
+        
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpGet("my-recived-transactions")]
+        public async Task<ActionResult<CoinTransactionResponseDto>> GetMyRecivedCoinTransactions()
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+
+            var isUserExists = await _usersService.UserExistsAsync(userId);
+
+            if (!isUserExists)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+
+            try
+            {
+                var coinTransactions = await _coinTransactionsService.GetRecivedCoinTransactionsAsync(userId);
+
+                var coinTransactionDtos = coinTransactions.Select(ct => new CoinTransactionResponseDto
+                {
+                    Id = ct.Id,
+                    Type = ct.Type.Name,
+                    Status = ct.Status.Name,
+                    CoinId = ct.CoinId,
+                    SenderWalletId = ct.SenderWalletId,
+                    RecipientWalletId = ct.RecipientWalletId,
+                    CoinSellOrderId = ct.CoinSellOrderId,
+                    CreatedAt = ct.CreatedAt.ToString(),
+                    UpdatedAt = ct.UpdatedAt.ToString(),
+                    CompletedAt = ct.CompletedAt.ToString(),
+                }).ToList();
+                
+                return Ok(coinTransactionDtos);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]
         [HttpGet("{id}")]
@@ -66,7 +162,7 @@ namespace MetaCoins.API.Controllers
             if (userId == Guid.Empty)
             {
                 return Unauthorized("User isn't authenticated");
-            } 
+            }
             
             if (requestDto == null) 
                 return BadRequest("Transaction data is required");

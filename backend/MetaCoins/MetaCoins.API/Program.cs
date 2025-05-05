@@ -137,10 +137,6 @@ builder.Services.AddScoped<IVotingSessionsRepository, VotingSessionsRepository>(
 // HttpClient Configuration
 builder.Services.AddHttpClient<IImageService, ImageService>();
 
-// AutoMapper Configuration
-builder.Services.AddAutoMapper(typeof(WalletProfile));
-builder.Services.AddAutoMapper(typeof(CoinProfile));
-
 // JWT Configuration
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
 
