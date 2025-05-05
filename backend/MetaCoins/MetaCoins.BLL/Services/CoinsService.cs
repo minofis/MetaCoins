@@ -113,7 +113,7 @@ namespace MetaCoins.BLL.Services
         public async Task<Coin> GetCoinByIdAsync(Guid coinId)
         {
             var coin = await _coinsRepo.GetCoinByIdAsync(coinId)
-                ?? throw new ArgumentException($"Coin with ID {coinId} not found.");;
+                ?? throw new ArgumentException($"Coin with ID {coinId} not found.");
 
             return coin;
         }

@@ -20,9 +20,11 @@ namespace MetaCoins.DAL.Data.Repositories
 
         public async Task UnlikeCoinAsync(Guid userId, Guid coinId)
         {
-            var like = _context.Likes.FirstOrDefault(l => l.CoinId == coinId && l.UserId == userId);
-            _context.Likes.Remove(like);
-            await _context.SaveChangesAsync();
+            await _context.Likes
+                .Where(
+                    l => l.UserId == userId
+                    && l.CoinId == coinId)
+                .ExecuteDeleteAsync();
         }
 
         public async Task<bool> IsCoinLikedAsync(Guid userId, Guid coinId)
