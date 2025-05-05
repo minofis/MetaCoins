@@ -25,6 +25,26 @@ namespace MetaCoins.DAL.Data.Repositories
                 .FirstOrDefaultAsync(ct => ct.Id == coinTransactionId);
         }
 
+        public async Task<List<CoinTransaction>> GetRecivedCoinTransactionsAsync(Guid userId)
+        {
+            return await _context.CoinTransactions
+                .Include(ct => ct.RecipientWallet)
+                .Include(ct => ct.Status)
+                .Include(ct => ct.Type)
+                .Where(ct => ct.RecipientWallet.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<CoinTransaction>> GetSentCoinTransactionsAsync(Guid userId)
+        {
+            return await _context.CoinTransactions
+                .Include(ct => ct.SenderWallet)
+                .Include(ct => ct.Status)
+                .Include(ct => ct.Type)
+                .Where(ct => ct.SenderWallet.UserId == userId)
+                .ToListAsync();
+        }
+
         public async Task UpdateCoinTransactionAsync(CoinTransaction coinTransaction)
         {
             _context.CoinTransactions.Update(coinTransaction);

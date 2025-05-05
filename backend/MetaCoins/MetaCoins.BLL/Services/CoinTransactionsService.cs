@@ -17,6 +17,16 @@ namespace MetaCoins.BLL.Services
             _walletsService = walletsService;
         }
 
+        public async Task<List<CoinTransaction>> GetSentCoinTransactionsAsync(Guid userId)
+        {
+            return await _coinTransactionsRepo.GetSentCoinTransactionsAsync(userId) ?? new List<CoinTransaction>();
+        }
+
+        public async Task<List<CoinTransaction>> GetRecivedCoinTransactionsAsync(Guid userId)
+        {
+            return await _coinTransactionsRepo.GetRecivedCoinTransactionsAsync(userId) ?? new List<CoinTransaction>();
+        }
+
         public async Task<CoinTransaction> GetCoinTransactionById(Guid coinTransactionId)
         {
             var coinTransaction = await _coinTransactionsRepo.GetCoinTransactionById(coinTransactionId)
