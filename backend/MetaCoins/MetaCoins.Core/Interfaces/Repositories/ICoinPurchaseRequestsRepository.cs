@@ -4,9 +4,8 @@ namespace MetaCoins.Core.Interfaces.Repositories
 {
     public interface ICoinPurchaseRequestsRepository
     {
-        Task<CoinPurchaseRequest> GetCoinPurchaseRequestById(Guid coinPurchaseRequestId);
+        Task<CoinPurchaseRequest> GetCoinPurchaseRequestByIdAsync(Guid coinPurchaseRequestId);
         Task CreateCoinPurchaseRequestAsync(CoinPurchaseRequest coinPurchaseRequest);
         Task UpdateCoinPurchaseRequestStatusAsync(Guid coinPurchaseRequestId, int statusId);
-        Task DeleteCoinPurchaseRequestAsync(Guid coinPurchaseRequestId);
     }
 }

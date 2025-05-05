@@ -12,10 +12,11 @@ namespace MetaCoins.DAL.Data.Repositories
             _context = context;
         }
 
-        public async Task<CoinPurchaseRequest> GetCoinPurchaseRequestById(Guid coinPurchaseRequestId)
+        public async Task<CoinPurchaseRequest> GetCoinPurchaseRequestByIdAsync(Guid coinPurchaseRequestId)
         {
             return await _context.CoinPurchaseRequests
                 .Include(cpr => cpr.Status)
+                .Include(cpr => cpr.BuyerWallet)
                 .FirstOrDefaultAsync(cpr => cpr.Id == coinPurchaseRequestId);
         }
 
@@ -23,13 +24,6 @@ namespace MetaCoins.DAL.Data.Repositories
         {
             await _context.CoinPurchaseRequests.AddAsync(coinPurchaseRequest);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteCoinPurchaseRequestAsync(Guid coinPurchaseRequestId)
-        {
-            await _context.CoinPurchaseRequests
-                .Where(cpr => cpr.Id == coinPurchaseRequestId)
-                .ExecuteDeleteAsync();
         }
 
         public async Task UpdateCoinPurchaseRequestStatusAsync(Guid coinPurchaseRequestId, int statusId)

@@ -51,20 +51,23 @@ namespace MetaCoins.BLL.Services
                 throw new ArgumentException($"Invalid coin sell order status: {status}");
             }
 
+            int newStatusId = (int)newStatus;
+
             var coinSellOrder = await _coinSellOrdersRepo.GetCoinSellOrderById(coinSellOrderId);
 
             await _coinsService.EnsureCoinOwnedByUserAsync(coinSellOrder.CoinId, userId);
 
-            if (coinSellOrder.StatusId == (int)newStatus)
+            if (coinSellOrder.StatusId == newStatusId)
             {
                 throw new ArgumentException($"Coin sell order with ID {coinSellOrderId} is already with status {newStatus}");
             } 
-            else if(coinSellOrder.StatusId == (int)CoinSellOrderStatuses.Cancelled)
+            
+            if(coinSellOrder.StatusId == (int)CoinSellOrderStatuses.Cancelled)
             {
                 throw new ArgumentException($"Coin sell order with ID {coinSellOrderId} is cancelled");
             }
 
-            await _coinSellOrdersRepo.UpdateCoinSellOrderStatusAsync(coinSellOrderId, (int)newStatus);
+            await _coinSellOrdersRepo.UpdateCoinSellOrderStatusAsync(coinSellOrderId, newStatusId);
         }
     }
 }
