@@ -18,6 +18,9 @@ namespace MetaCoins.Core.Entities
         public Guid? CoinSellOrderId { get; set; }
         public CoinSellOrder? CoinSellOrder { get; set; }
 
+        public Guid? CoinPurchaseRequestId { get; set; }
+        public CoinPurchaseRequest? CoinPurchaseRequest { get; set; }
+
         public Guid? SenderWalletId { get; set; }
         public Wallet? SenderWallet { get; set; }
 

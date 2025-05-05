@@ -43,6 +43,12 @@ namespace MetaCoins.DAL.Data.Configurations
                 .HasOne(ct => ct.CoinSellOrder)
                 .WithMany()
                 .HasForeignKey(ct => ct.CoinSellOrderId);
+
+            // CoinTransaction to CoinPurchaseRequest
+            builder
+                .HasOne(ct => ct.CoinPurchaseRequest)
+                .WithMany()
+                .HasForeignKey(ct => ct.CoinPurchaseRequestId);
         }
     }
 }

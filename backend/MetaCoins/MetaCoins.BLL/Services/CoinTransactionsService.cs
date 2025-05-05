@@ -67,7 +67,7 @@ namespace MetaCoins.BLL.Services
 
         public Task PurchaseCoinFromSellOrderAsync(Guid coinSellOrderId, Guid buyerUserId)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

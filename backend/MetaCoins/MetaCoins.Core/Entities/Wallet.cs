@@ -10,6 +10,8 @@ namespace MetaCoins.Core.Entities
         public ICollection<CoinTransaction> RecivedTransactions { get; set; }  = new List<CoinTransaction>();
         public ICollection<Coin> Coins { get; set; } = new List<Coin>();
 
+        public decimal Balance { get; set; }
+
         public Guid UserId { get; set; }
         public UserEntity User { get; set; } = null!;
 
