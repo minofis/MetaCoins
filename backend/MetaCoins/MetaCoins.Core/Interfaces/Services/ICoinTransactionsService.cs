@@ -8,6 +8,6 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<List<CoinTransaction>> GetRecivedCoinTransactionsAsync(Guid userId);
         Task<CoinTransaction> GetCoinTransactionById(Guid coinTransactionId);
         Task TransferCoinAsync(Guid senderUserId, string recipientUsername, Guid coinId);
-        Task PurchaseCoinFromSellOrderAsync(Guid coinSellOrderId, Guid buyerUserId);
+        Task ApproveCoinPurchaseRequestAsync(Guid coinPurchaseRequestId, Guid sellerUserId);
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MetaCoins.DAL.Data.Migrations
 {
     [DbContext(typeof(MetaCoinsDbContext))]
-    [Migration("20250504165709_Initial")]
+    [Migration("20250505174148_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -94,6 +94,38 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.ToTable("CoinOwnerRecords");
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinPurchaseRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BuyerWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CoinSellOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuyerWalletId");
+
+                    b.HasIndex("CoinSellOrderId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("CoinPurchaseRequests");
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.CoinSellOrder", b =>
                 {
                     b.Property<Guid>("Id")
@@ -141,6 +173,9 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Property<Guid>("CoinId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CoinPurchaseRequestId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("CoinSellOrderId")
                         .HasColumnType("uuid");
 
@@ -168,6 +203,8 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CoinId");
+
+                    b.HasIndex("CoinPurchaseRequestId");
 
                     b.HasIndex("CoinSellOrderId");
 
@@ -355,6 +392,45 @@ namespace MetaCoins.DAL.Data.Migrations
                         {
                             Id = 3,
                             Name = "Deleted"
+                        });
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.CoinPurchaseRequest.CoinPurchaseRequestStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoinPurchaseRequestStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Pending"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Approved"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Rejected"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Cancelled"
                         });
                 });
 
@@ -596,6 +672,9 @@ namespace MetaCoins.DAL.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -756,6 +835,33 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Navigation("Wallet");
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinPurchaseRequest", b =>
+                {
+                    b.HasOne("MetaCoins.Core.Entities.Wallet", "BuyerWallet")
+                        .WithMany()
+                        .HasForeignKey("BuyerWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.CoinSellOrder", "CoinSellOrder")
+                        .WithMany()
+                        .HasForeignKey("CoinSellOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.CoinPurchaseRequest.CoinPurchaseRequestStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BuyerWallet");
+
+                    b.Navigation("CoinSellOrder");
+
+                    b.Navigation("Status");
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.CoinSellOrder", b =>
                 {
                     b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
@@ -791,6 +897,10 @@ namespace MetaCoins.DAL.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MetaCoins.Core.Entities.CoinPurchaseRequest", "CoinPurchaseRequest")
+                        .WithMany()
+                        .HasForeignKey("CoinPurchaseRequestId");
+
                     b.HasOne("MetaCoins.Core.Entities.CoinSellOrder", "CoinSellOrder")
                         .WithMany()
                         .HasForeignKey("CoinSellOrderId");
@@ -816,6 +926,8 @@ namespace MetaCoins.DAL.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Coin");
+
+                    b.Navigation("CoinPurchaseRequest");
 
                     b.Navigation("CoinSellOrder");
 

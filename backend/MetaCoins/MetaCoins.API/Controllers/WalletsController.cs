@@ -43,6 +43,7 @@ namespace MetaCoins.API.Controllers
                 {
                     Id = wallet.Id,
                     OwnerUsername = wallet.User.UserName,
+                    Balance = wallet.Balance,
                     CreatedAt = wallet.CreatedAt.ToString()
                 };
 
@@ -71,6 +72,7 @@ namespace MetaCoins.API.Controllers
                 {
                     Id = wallet.Id,
                     OwnerUsername = wallet.User.UserName,
+                    Balance = wallet.Balance,
                     CreatedAt = wallet.CreatedAt.ToString()
                 };
 
@@ -96,6 +98,7 @@ namespace MetaCoins.API.Controllers
                 {
                     Id = wallet.Id,
                     OwnerUsername = wallet.User.UserName,
+                    Balance = wallet.Balance,
                     CreatedAt = wallet.CreatedAt.ToString()
                 };
 
@@ -129,6 +132,7 @@ namespace MetaCoins.API.Controllers
                 {
                     Id = wallet.Id,
                     OwnerUsername = wallet.User.UserName,
+                    Balance = wallet.Balance,
                     CreatedAt = wallet.CreatedAt.ToString()
                 };
 

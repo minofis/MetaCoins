@@ -17,6 +17,7 @@ namespace MetaCoins.DAL.Data.Repositories
             return await _context.CoinPurchaseRequests
                 .Include(cpr => cpr.Status)
                 .Include(cpr => cpr.BuyerWallet)
+                .Include(cpr => cpr.CoinSellOrder)
                 .FirstOrDefaultAsync(cpr => cpr.Id == coinPurchaseRequestId);
         }
 

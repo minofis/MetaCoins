@@ -182,5 +182,35 @@ namespace MetaCoins.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             };
         }
+
+        [Authorize(Policy = "AdminOrCustomerPolicy")]
+        [HttpPost("approve-coin-purchase-request")]
+        public async Task<ActionResult> ApproveCoinPurchaseRequest(Guid coinPurchaseRequestId)
+        {
+            var userId = await _usersService.GetCurrentUserIdAsync();
+
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User isn't authenticated");
+            }
+            
+            if (coinPurchaseRequestId == Guid.Empty) 
+                return BadRequest("Coin purchase request ID is required");
+
+            try
+            {
+                await _coinTransactionsService.ApproveCoinPurchaseRequestAsync(coinPurchaseRequestId, userId);
+
+                return Ok(new {message = "Coin is sold."});
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            };
+        }
     }
 }

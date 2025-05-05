@@ -9,10 +9,12 @@ namespace MetaCoins.BLL.Services
     {
         private readonly ICoinPurchaseRequestsRepository _coinPurchaseRequestsRepo;
         private readonly IWalletsService _walletsService;
-        public CoinPurchaseRequestsService(ICoinPurchaseRequestsRepository coinPurchaseRequestsRepo, IWalletsService walletsService)
+        private readonly ICoinSellOrdersService _coinSellOrdersService;
+        public CoinPurchaseRequestsService(ICoinPurchaseRequestsRepository coinPurchaseRequestsRepo, ICoinSellOrdersService coinSellOrdersService, IWalletsService walletsService)
         {
             _coinPurchaseRequestsRepo = coinPurchaseRequestsRepo;
             _walletsService = walletsService;
+            _coinSellOrdersService = coinSellOrdersService;
         }
 
         public async Task<CoinPurchaseRequest> GetCoinPurchaseRequestByIdAsync(Guid coinPurchaseRequestId)
@@ -25,7 +27,12 @@ namespace MetaCoins.BLL.Services
 
         public async Task CreateCoinPurchaseRequestAsync(Guid coinSellOrderId, Guid buyerUserId)
         {
+            var coinSellOrder = await _coinSellOrdersService.GetCoinSellOrderById(coinSellOrderId);
+
             var buyerWallet = await _walletsService.GetWalletByUserIdAsync(buyerUserId);
+
+            if(!buyerWallet.HasEnoughBalance(coinSellOrder.Price))
+                throw new InvalidOperationException($"Wallet with ID {buyerWallet.Id} does not have enough balance.");
 
             var coinPurchaseRequest = new CoinPurchaseRequest
             {
@@ -74,6 +81,7 @@ namespace MetaCoins.BLL.Services
 
             if (coinPurchaseRequest.BuyerWallet.UserId != userId)
                 throw new ArgumentException($"User with ID {userId} does not own the coin purchase request with ID {coinPurchaseRequestId}");
+                
             return coinPurchaseRequest;
         }
     }
