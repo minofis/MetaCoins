@@ -45,12 +45,10 @@ namespace MetaCoins.BLL.Services
 
         public async Task UnlikeCoinAsync(Guid userId, Guid coinId)
         {
-            var user = await _usersService.GetUserByIdAsync(userId);
+            var isLiked = await IsCoinLikedAsync(userId, coinId);
 
-            if(!user.Likes.Any(l => l.CoinId == coinId))
-            {
+            if(!isLiked)
                 throw new ArgumentException($"Coin with ID {coinId} not liked.");
-            }
 
             await _likesRepo.UnlikeCoinAsync(userId, coinId);
         }

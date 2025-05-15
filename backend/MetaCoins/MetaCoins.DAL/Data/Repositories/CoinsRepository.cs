@@ -44,6 +44,13 @@ namespace MetaCoins.DAL.Data.Repositories
         public async Task CreateCoinOwnerRecordAsync(CoinOwnerRecord ownerRecord)
         {
             await _context.CoinOwnerRecords.AddAsync(ownerRecord);
+
+            var coin = await _context.Coins
+                .Include(c => c.OwnershipRecords)
+                .FirstOrDefaultAsync(c => c.Id == ownerRecord.CoinId);
+
+            coin.OwnershipRecords.Add(ownerRecord);
+            
             await _context.SaveChangesAsync();
         }
 

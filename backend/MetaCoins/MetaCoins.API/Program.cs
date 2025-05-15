@@ -116,7 +116,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IWalletsService, WalletsService>();
-builder.Services.AddScoped<ITransactionsService, TransactionsService>();
+builder.Services.AddScoped<ICoinTransactionsService, CoinTransactionsService>();
+builder.Services.AddScoped<ICoinPurchaseRequestsService, CoinPurchaseRequestsService>();
+builder.Services.AddScoped<ICoinSellOrdersService, CoinSellOrdersService>();
 builder.Services.AddScoped<ICoinsService, CoinsService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<ILikesService, LikesService>();
@@ -125,7 +127,9 @@ builder.Services.AddScoped<IVotingSessionsService, VotingSessionsService>();
 
 // Repositories Scope
 builder.Services.AddScoped<IWalletsRepository, WalletsRepository>();
-builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+builder.Services.AddScoped<ICoinTransactionsRepository, CoinTransactionsRepository>();
+builder.Services.AddScoped<ICoinSellOrdersRepository, CoinSellOrdersRepository>();
+builder.Services.AddScoped<ICoinPurchaseRequestsRepository, CoinPurchaseRequestsRepository>();
 builder.Services.AddScoped<ICoinsRepository, CoinsRepository>();
 builder.Services.AddScoped<IProfilesRepository, ProfilesRepository>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
@@ -134,11 +138,6 @@ builder.Services.AddScoped<IVotingSessionsRepository, VotingSessionsRepository>(
 
 // HttpClient Configuration
 builder.Services.AddHttpClient<IImageService, ImageService>();
-
-// AutoMapper Configuration
-builder.Services.AddAutoMapper(typeof(WalletProfile));
-builder.Services.AddAutoMapper(typeof(TransactionProfile));
-builder.Services.AddAutoMapper(typeof(CoinProfile));
 
 // JWT Configuration
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));

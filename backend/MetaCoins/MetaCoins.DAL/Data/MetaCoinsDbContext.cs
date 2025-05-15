@@ -1,7 +1,9 @@
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Identity;
 using MetaCoins.Core.Entities.Lookups.Coin;
-using MetaCoins.Core.Entities.Lookups.Transaction;
+using MetaCoins.Core.Entities.Lookups.CoinPurchaseRequest;
+using MetaCoins.Core.Entities.Lookups.CoinSellOrder;
+using MetaCoins.Core.Entities.Lookups.CoinTransaction;
 using MetaCoins.Core.Entities.Lookups.Votes;
 using MetaCoins.Core.Entities.Votes;
 using MetaCoins.DAL.Data.Configurations;
@@ -21,7 +23,9 @@ namespace MetaCoins.DAL.Data
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Coin> Coins { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<CoinTransaction> CoinTransactions { get; set; }
+        public DbSet<CoinPurchaseRequest> CoinPurchaseRequests { get; set; }
+        public DbSet<CoinSellOrder> CoinSellOrders { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<CoinOwnerRecord> CoinOwnerRecords { get; set; }
 
@@ -31,8 +35,10 @@ namespace MetaCoins.DAL.Data
         public DbSet<CoinVotingSession> CoinVotingSessions { get; set; }
 
         // Lookups
-        public DbSet<TransactionType> TransactionTypes { get; set; }
-        public DbSet<TransactionStatus> TransactionStatuses { get; set; }
+        public DbSet<CoinTransactionType> CoinTransactionTypes { get; set; }
+        public DbSet<CoinTransactionStatus> CoinTransactionStatuses { get; set; }
+        public DbSet<CoinSellOrderStatus> CoinSellOrderStatuses { get; set; }
+        public DbSet<CoinPurchaseRequestStatus> CoinPurchaseRequestStatuses { get; set; }
         public DbSet<VotingType> VotingTypes { get; set; }
         public DbSet<CoinStatus> CoinStatuses { get; set; }
 
@@ -40,7 +46,9 @@ namespace MetaCoins.DAL.Data
         {
             // Entities
             modelBuilder.ApplyConfiguration(new WalletConfiguration());
-            modelBuilder.ApplyConfiguration(new TransactionConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinTransactionConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinSellOrderConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinPurchaseRequestConfiguration());
             modelBuilder.ApplyConfiguration(new CoinConfiguration());
             modelBuilder.ApplyConfiguration(new LikeConfiguration());
             
@@ -50,8 +58,10 @@ namespace MetaCoins.DAL.Data
             modelBuilder.ApplyConfiguration(new CoinVotingSessionConfiguration());
 
             // Lookups
-            modelBuilder.ApplyConfiguration(new TransactionTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new TransactionStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinTransactionTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinTransactionStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinSellOrderStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new CoinPurchaseRequestStatusConfiguration());
             modelBuilder.ApplyConfiguration(new VotingTypeConfiguration());
             modelBuilder.ApplyConfiguration(new CoinStatusConfiguration());
             

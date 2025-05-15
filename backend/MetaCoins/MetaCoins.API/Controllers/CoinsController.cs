@@ -1,6 +1,4 @@
-using AutoMapper;
 using MetaCoins.API.Dtos.CoinDtos;
-using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Helpers;
 using MetaCoins.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,14 +10,14 @@ namespace MetaCoins.API.Controllers
     [Route("meta-coins/[controller]")]
     public class CoinsController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IUsersService _usersService;
         private readonly ICoinsService _coinsService;
-        public CoinsController(IMapper mapper, IUsersService usersService, ICoinsService coinsService)
+        private readonly IConfiguration _config;
+        public CoinsController(IUsersService usersService, ICoinsService coinsService, IConfiguration config)
         {
-            _mapper = mapper;
             _usersService = usersService;
             _coinsService = coinsService;
+            _config = config;
         }
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]
@@ -30,7 +28,19 @@ namespace MetaCoins.API.Controllers
 
                 var paginatedDto = new PaginatedResult<CoinResponseDto>
                 {
-                    Items = paginatedCoins.Items.Select(_mapper.Map<CoinResponseDto>).ToList(),
+                    Items = paginatedCoins.Items.Select(i => new CoinResponseDto
+                    {
+                        Id = i.Id,
+                        ImageUrl = _config["ApiUrl"] + i.ImageUrl,
+                        Status = i.CoinStatus.Name,
+                        Prompt = i.Prompt,
+                        Title = i.Title,
+                        Description = i.Description,
+                        LikesCount = i.LikesCount,
+                        OwnerUsername = i.Wallet.User.UserName,
+                        CreatorUsername = i.Creator.User.UserName,
+                        CreatedAt = i.CreatedAt.ToString()
+                    }).ToList(),
                     TotalItems = paginatedCoins.TotalItems,
                     Page = paginatedCoins.Page,
                     PageSize = paginatedCoins.PageSize
@@ -46,7 +56,19 @@ namespace MetaCoins.API.Controllers
             {
                 var coin = await _coinsService.GetCoinByIdAsync(id);
 
-                var coinDto = _mapper.Map<CoinResponseDto>(coin);
+                var coinDto = new CoinResponseDto
+                    {
+                        Id = coin.Id,
+                        ImageUrl = _config["ApiUrl"] + coin.ImageUrl,
+                        Status = coin.CoinStatus.Name,
+                        Prompt = coin.Prompt,
+                        Title = coin.Title,
+                        Description = coin.Description,
+                        LikesCount = coin.LikesCount,
+                        OwnerUsername = coin.Wallet.User.UserName,
+                        CreatorUsername = coin.Creator.User.UserName,
+                        CreatedAt = coin.CreatedAt.ToString()
+                    };
 
                 return Ok(coinDto);
             }
@@ -89,7 +111,7 @@ namespace MetaCoins.API.Controllers
 
         [Authorize(Policy = "CustomerPolicy")]
         [HttpGet("{id}/owner-records")]
-        public async Task<ActionResult<List<CoinOwnerRecord>>> GetOwnershipRecordsByCoinId(Guid id)
+        public async Task<ActionResult<List<CoinOwnerRecordResponseDto>>> GetOwnershipRecordsByCoinId(Guid id)
         {
             var userId = await _usersService.GetCurrentUserIdAsync();
 
@@ -99,9 +121,15 @@ namespace MetaCoins.API.Controllers
             }
             try
             {
-                var ownerRecords = await _coinsService.GetOwnershipRecordsByCoinIdAsync(id);
+                var ownerRecords = await _coinsService.GetOwnerRecordsByCoinIdAsync(id);
 
-                var ownerRecordDtos = _mapper.Map<List<CoinOwnerRecordResponseDto>>(ownerRecords);
+                var ownerRecordDtos = ownerRecords.Select(or => new CoinOwnerRecordResponseDto
+                {
+                    Id = or.Id,
+                    OwnerUsername = or.Wallet.User.UserName,
+                    CoinId = or.CoinId,
+                    AcquiredAt = or.AcquiredAt.ToString()
+                }).ToList();
 
                 return Ok(ownerRecordDtos);
             }

@@ -91,6 +91,131 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.ToTable("CoinOwnerRecords");
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinPurchaseRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BuyerWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CoinSellOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuyerWalletId");
+
+                    b.HasIndex("CoinSellOrderId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("CoinPurchaseRequests");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinSellOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CoinId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("SellerWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.HasIndex("SellerWalletId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("CoinSellOrders");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CoinId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CoinPurchaseRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CoinSellOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RecipientWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SenderWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoinId");
+
+                    b.HasIndex("CoinPurchaseRequestId");
+
+                    b.HasIndex("CoinSellOrderId");
+
+                    b.HasIndex("RecipientWalletId");
+
+                    b.HasIndex("SenderWalletId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("CoinTransactions");
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.Identity.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -241,9 +366,6 @@ namespace MetaCoins.DAL.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -270,7 +392,7 @@ namespace MetaCoins.DAL.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.Transaction.TransactionStatus", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.CoinPurchaseRequest.CoinPurchaseRequestStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -278,8 +400,44 @@ namespace MetaCoins.DAL.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoinPurchaseRequestStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Pending"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Approved"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Rejected"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.CoinSellOrder.CoinSellOrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -287,7 +445,41 @@ namespace MetaCoins.DAL.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionStatuses");
+                    b.ToTable("CoinSellOrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Active"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Completed"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.CoinTransaction.CoinTransactionStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoinTransactionStatuses");
 
                     b.HasData(
                         new
@@ -307,7 +499,7 @@ namespace MetaCoins.DAL.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.Transaction.TransactionType", b =>
+            modelBuilder.Entity("MetaCoins.Core.Entities.Lookups.CoinTransaction.CoinTransactionType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -315,42 +507,24 @@ namespace MetaCoins.DAL.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionTypes");
+                    b.ToTable("CoinTransactionTypes");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "FundsTransfer"
+                            Name = "Transfer"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Charity"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Salary"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Topup"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "MobileService"
+                            Name = "Sale"
                         });
                 });
 
@@ -361,9 +535,6 @@ namespace MetaCoins.DAL.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -407,45 +578,6 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Profiles");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Transaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CoinId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("RecipientWalletId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SenderWalletId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoinId");
-
-                    b.HasIndex("RecipientWalletId");
-
-                    b.HasIndex("SenderWalletId");
-
-                    b.HasIndex("StatusId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVote", b =>
@@ -536,6 +668,9 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -697,6 +832,111 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Navigation("Wallet");
                 });
 
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinPurchaseRequest", b =>
+                {
+                    b.HasOne("MetaCoins.Core.Entities.Wallet", "BuyerWallet")
+                        .WithMany()
+                        .HasForeignKey("BuyerWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.CoinSellOrder", "CoinSellOrder")
+                        .WithMany()
+                        .HasForeignKey("CoinSellOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.CoinPurchaseRequest.CoinPurchaseRequestStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BuyerWallet");
+
+                    b.Navigation("CoinSellOrder");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinSellOrder", b =>
+                {
+                    b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
+                        .WithMany()
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Wallet", "SellerWallet")
+                        .WithMany()
+                        .HasForeignKey("SellerWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.CoinSellOrder.CoinSellOrderStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coin");
+
+                    b.Navigation("SellerWallet");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("MetaCoins.Core.Entities.CoinTransaction", b =>
+                {
+                    b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
+                        .WithMany()
+                        .HasForeignKey("CoinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.CoinPurchaseRequest", "CoinPurchaseRequest")
+                        .WithMany()
+                        .HasForeignKey("CoinPurchaseRequestId");
+
+                    b.HasOne("MetaCoins.Core.Entities.CoinSellOrder", "CoinSellOrder")
+                        .WithMany()
+                        .HasForeignKey("CoinSellOrderId");
+
+                    b.HasOne("MetaCoins.Core.Entities.Wallet", "RecipientWallet")
+                        .WithMany("RecivedTransactions")
+                        .HasForeignKey("RecipientWalletId");
+
+                    b.HasOne("MetaCoins.Core.Entities.Wallet", "SenderWallet")
+                        .WithMany("SentTransactions")
+                        .HasForeignKey("SenderWalletId");
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.CoinTransaction.CoinTransactionStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MetaCoins.Core.Entities.Lookups.CoinTransaction.CoinTransactionType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coin");
+
+                    b.Navigation("CoinPurchaseRequest");
+
+                    b.Navigation("CoinSellOrder");
+
+                    b.Navigation("RecipientWallet");
+
+                    b.Navigation("SenderWallet");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Type");
+                });
+
             modelBuilder.Entity("MetaCoins.Core.Entities.Identity.UserEntity", b =>
                 {
                     b.HasOne("MetaCoins.Core.Entities.Profile", "Profile")
@@ -733,49 +973,6 @@ namespace MetaCoins.DAL.Data.Migrations
                     b.Navigation("Coin");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MetaCoins.Core.Entities.Transaction", b =>
-                {
-                    b.HasOne("MetaCoins.Core.Entities.Coin", "Coin")
-                        .WithMany()
-                        .HasForeignKey("CoinId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MetaCoins.Core.Entities.Wallet", "RecipientWallet")
-                        .WithMany("RecivedTransactions")
-                        .HasForeignKey("RecipientWalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MetaCoins.Core.Entities.Wallet", "SenderWallet")
-                        .WithMany("SentTransactions")
-                        .HasForeignKey("SenderWalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MetaCoins.Core.Entities.Lookups.Transaction.TransactionStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MetaCoins.Core.Entities.Lookups.Transaction.TransactionType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coin");
-
-                    b.Navigation("RecipientWallet");
-
-                    b.Navigation("SenderWallet");
-
-                    b.Navigation("Status");
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Votes.CoinVote", b =>
@@ -916,7 +1113,8 @@ namespace MetaCoins.DAL.Data.Migrations
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Profile", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MetaCoins.Core.Entities.Votes.VotingSession", b =>

@@ -47,7 +47,7 @@ namespace MetaCoins.DAL.Data.Repositories
         {
             await _context.VotingSessions
                 .Where(vs => vs.Id == votingSessionId)
-                .ExecuteUpdateAsync(s => s.SetProperty(dvs => dvs.IsActive, status));
+                .ExecuteUpdateAsync(s => s.SetProperty(vs => vs.IsActive, status));
         }
 
         public async Task UpdateVotingSessionWinnerAsync(Guid votingSessionId, Guid winnerId)

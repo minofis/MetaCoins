@@ -12,14 +12,8 @@ namespace MetaCoins.BLL.Services
             _walletsRepo = walletsRepo;
         }
 
-        public async Task<List<Wallet>> GetAllWalletsAsync()
-        {
-            return await _walletsRepo.GetAllWalletsAsync();
-        }
-
         public async Task<Wallet> GetWalletByIdAsync(Guid walletId)
         {
-            // Get wallet by specificated ID
             var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
                 ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
 
@@ -28,7 +22,6 @@ namespace MetaCoins.BLL.Services
 
         public async Task CreateWalletAsync(Guid walletId, Guid userId)
         {
-            // Create a wallet
             var wallet = new Wallet
             {
                 Id = walletId,
@@ -36,34 +29,7 @@ namespace MetaCoins.BLL.Services
                 CreatedAt = DateTime.Now.ToUniversalTime()
             };
 
-            // Add the wallet
             await _walletsRepo.CreateWalletAsync(wallet);
-        }
-
-        public async Task<List<Transaction>> GetRecivedTransactionsByIdAsync(Guid walletId)
-        {
-            // Get wallet by specificated ID
-            var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
-                ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
-
-            // Get recived transactions of the wallet
-            var recivedTransactions = wallet.RecivedTransactions
-                ?? throw new ArgumentException($"Recived transactions of wallet with ID {walletId} not found.");
-
-            return recivedTransactions;
-        }
-
-        public async Task<List<Transaction>> GetSentTransactionsByIdAsync(Guid walletId)
-        {
-            // Get wallet by specificated ID
-            var wallet = await _walletsRepo.GetWalletByIdAsync(walletId)
-                ?? throw new ArgumentException($"Wallet with ID {walletId} not found.");
-
-            // Get sent transactions of the wallet
-            var sentTransactions = wallet.SentTransactions
-                ?? throw new ArgumentException($"Sent transactions of wallet with ID {walletId} not found.");
-
-            return sentTransactions;
         }
 
         public async Task<Wallet> GetWalletByUsernameAsync(string username)

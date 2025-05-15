@@ -113,24 +113,19 @@ namespace MetaCoins.BLL.Services
         public async Task<Coin> GetCoinByIdAsync(Guid coinId)
         {
             var coin = await _coinsRepo.GetCoinByIdAsync(coinId)
-                ?? throw new ArgumentException($"Coin with ID {coinId} not found.");;
+                ?? throw new ArgumentException($"Coin with ID {coinId} not found.");
 
             return coin;
         }
 
-        public async Task<List<CoinOwnerRecord>> GetOwnershipRecordsByCoinIdAsync(Guid coinId)
+        public async Task<List<CoinOwnerRecord>> GetOwnerRecordsByCoinIdAsync(Guid coinId)
         {
             return await _coinsRepo.GetOwnerRecordsByCoinIdAsync(coinId) ?? new List<CoinOwnerRecord>();
         }
 
         public async Task UpdateCoinDetailsAsync(Guid userId, Guid coinId, string? title, string? description)
         {
-            var coin = await GetCoinByIdAsync(coinId);
-
-            if (coin.Wallet.UserId != userId)
-            {
-                throw new ArgumentException($"This user does not have a coin with ID {coinId}");
-            }
+            var coin = await EnsureCoinOwnedByUserAsync(coinId, userId);
 
             if(coin.CoinStatusId == (int)CoinStatuses.Deleted)
             {
@@ -149,22 +144,39 @@ namespace MetaCoins.BLL.Services
                 throw new ArgumentException($"Invalid coin status: {status}");
             }
 
-            var coin = await GetCoinByIdAsync(coinId);
-
-            if (coin.Wallet.UserId != userId)
-            {
-                throw new ArgumentException($"This user does not have a coin with ID {coinId}");
-            }
+            var coin = await EnsureCoinOwnedByUserAsync(coinId, userId);
 
             if (coin.CoinStatusId == (int)newStatus)
             {
                 throw new ArgumentException($"Coin with ID {coinId} is already with status {newStatus}");
-            } else if(coin.CoinStatusId == (int)CoinStatuses.Deleted)
+            } 
+            else if(coin.CoinStatusId == (int)CoinStatuses.Deleted)
             {
                 throw new ArgumentException($"Coin with ID {coinId} is deleted");
             }
 
             await _coinsRepo.UpdateCoinStatusAsync(coin.Id, (int)newStatus);
+        }
+
+        public async Task<Coin> EnsureCoinOwnedByUserAsync(Guid coinId, Guid userId)
+        {
+            var coin = await GetCoinByIdAsync(coinId);
+
+            if (coin.Wallet.UserId != userId)
+                throw new ArgumentException($"User with ID {userId} does not own the coin with ID {coinId}");
+            return coin;
+        }
+
+        public async Task CreateCoinOwnerRecordAsync(Guid coinId, Guid walletId)
+        {
+            var ownerRecord = new CoinOwnerRecord{
+                Id = Guid.NewGuid(),
+                WalletId = walletId,
+                CoinId = coinId,
+                AcquiredAt = DateTime.UtcNow
+            };
+
+            await _coinsRepo.CreateCoinOwnerRecordAsync(ownerRecord);
         }
     }
 }
