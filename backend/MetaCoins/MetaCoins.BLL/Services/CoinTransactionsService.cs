@@ -1,5 +1,6 @@
 using MetaCoins.Core.Entities;
 using MetaCoins.Core.Entities.Enums;
+using MetaCoins.Core.Entities.Enums.CoinSellOrder;
 using MetaCoins.Core.Entities.Enums.CoinTransaction;
 using MetaCoins.Core.Interfaces.Repositories;
 using MetaCoins.Core.Interfaces.Services;
@@ -10,14 +11,21 @@ namespace MetaCoins.BLL.Services
     {
         private readonly ICoinTransactionsRepository _coinTransactionsRepo;
         private readonly ICoinPurchaseRequestsService _coinPurchaseRequestsService;
+        private readonly ICoinSellOrdersService _coinSellOrdersService;
         private readonly IWalletsService _walletsService;
         private readonly ICoinsService _coinsService;
-        public CoinTransactionsService(ICoinTransactionsRepository coinTransactionsRepo, ICoinPurchaseRequestsService coinPurchaseRequestsService, IWalletsService walletsService, ICoinsService coinsService)
+        public CoinTransactionsService(
+            ICoinTransactionsRepository coinTransactionsRepo, 
+            ICoinPurchaseRequestsService coinPurchaseRequestsService, 
+            IWalletsService walletsService, 
+            ICoinsService coinsService, 
+            ICoinSellOrdersService coinSellOrdersService)
         {
             _coinTransactionsRepo = coinTransactionsRepo;
             _coinsService = coinsService;
             _walletsService = walletsService;
             _coinPurchaseRequestsService = coinPurchaseRequestsService;
+            _coinSellOrdersService = coinSellOrdersService;
         }
 
         public async Task<List<CoinTransaction>> GetSentCoinTransactionsAsync(Guid userId)
@@ -110,6 +118,11 @@ namespace MetaCoins.BLL.Services
                 buyerWallet.UserId, 
                 coinPurchaseRequestId, 
                 CoinPurchaseRequestStatuses.Approved.ToString());
+
+            await _coinSellOrdersService.UpdateCoinSellOrderStatusAsync(
+                coinPurchaseRequest.CoinSellOrderId,
+                sellerWallet.UserId,
+                CoinSellOrderStatuses.Completed.ToString());
         }
     }
 }
