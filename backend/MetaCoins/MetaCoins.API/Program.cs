@@ -136,6 +136,9 @@ builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<ICoinVotesRepository, CoinVotesRepository>();
 builder.Services.AddScoped<IVotingSessionsRepository, VotingSessionsRepository>();
 
+// Email service
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 // HttpClient Configuration
 builder.Services.AddHttpClient<IImageService, ImageService>();
 
