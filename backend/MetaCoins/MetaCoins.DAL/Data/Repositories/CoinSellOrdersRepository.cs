@@ -21,6 +21,8 @@ namespace MetaCoins.DAL.Data.Repositories
         {
             return await _context.CoinSellOrders
                 .Include(cso => cso.Status)
+                .Include(cso => cso.SellerWallet)
+                    .ThenInclude(sw => sw.User)
                 .FirstOrDefaultAsync(cso => cso.Id == coinSellOrderId);
         }
 
