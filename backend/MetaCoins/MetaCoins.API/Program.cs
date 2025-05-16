@@ -14,6 +14,9 @@ using MetaCoins.BLL.Services;
 using MetaCoins.Core.Interfaces.Auth;
 using MetaCoins.API.Helpers;
 using Quartz;
+using Amazon.S3;
+using Microsoft.Extensions.Options;
+using Amazon;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +29,20 @@ builder.Services.AddDbContext<MetaCoinsDbContext>(options =>{
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<MetaCoinsDbContext>()
     .AddDefaultTokenProviders();
+
+// S3 Settings Configuration
+builder.Services.Configure<S3Settings>(builder.Configuration.GetSection(nameof(S3Settings)));
+
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var s3settings = sp.GetRequiredService<IOptions<S3Settings>>().Value;
+    var config = new AmazonS3Config
+    {
+        RegionEndpoint = RegionEndpoint.GetBySystemName(s3settings.Region)
+    };
+
+    return new AmazonS3Client(config);
+});
 
 // Quartz config
 builder.Services.AddQuartz(q =>{
@@ -54,6 +71,7 @@ builder.Services.AddCors(options =>
             });
     });
 
+// Jwt configuration
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
 var jwtConfig = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
