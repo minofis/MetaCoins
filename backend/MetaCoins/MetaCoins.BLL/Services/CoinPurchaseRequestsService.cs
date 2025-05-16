@@ -10,11 +10,13 @@ namespace MetaCoins.BLL.Services
         private readonly ICoinPurchaseRequestsRepository _coinPurchaseRequestsRepo;
         private readonly IWalletsService _walletsService;
         private readonly ICoinSellOrdersService _coinSellOrdersService;
-        public CoinPurchaseRequestsService(ICoinPurchaseRequestsRepository coinPurchaseRequestsRepo, ICoinSellOrdersService coinSellOrdersService, IWalletsService walletsService)
+        private readonly IEmailService _emailService;
+        public CoinPurchaseRequestsService(ICoinPurchaseRequestsRepository coinPurchaseRequestsRepo, ICoinSellOrdersService coinSellOrdersService, IWalletsService walletsService, IEmailService emailService)
         {
             _coinPurchaseRequestsRepo = coinPurchaseRequestsRepo;
             _walletsService = walletsService;
             _coinSellOrdersService = coinSellOrdersService;
+            _emailService = emailService;
         }
 
         public async Task<CoinPurchaseRequest> GetCoinPurchaseRequestByIdAsync(Guid coinPurchaseRequestId)
@@ -44,6 +46,13 @@ namespace MetaCoins.BLL.Services
             };
 
             await _coinPurchaseRequestsRepo.CreateCoinPurchaseRequestAsync(coinPurchaseRequest);
+
+            // Sending email about the purchase request to the seller
+            var sellerEmail = coinSellOrder.SellerWallet.User.Email;
+            var message = $"Dear {coinSellOrder.SellerWallet.User.UserName}. User with username '{buyerWallet.User.UserName}' has sent you a new coin purchase request on your coin sell order with ID {coinSellOrder.Id}.";
+            var subject = "You got a new coin purchase request!";
+
+            await _emailService.SendEmailAsync(sellerEmail, subject, message);
         }
 
         public async Task UpdateCoinPurchaseRequestStatusAsync(Guid userId, Guid coinPurchaseRequestId, string status)

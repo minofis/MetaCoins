@@ -13,19 +13,22 @@ namespace MetaCoins.BLL.Services
         private readonly ICoinPurchaseRequestsService _coinPurchaseRequestsService;
         private readonly ICoinSellOrdersService _coinSellOrdersService;
         private readonly IWalletsService _walletsService;
+        private readonly IEmailService _emailService;
         private readonly ICoinsService _coinsService;
         public CoinTransactionsService(
             ICoinTransactionsRepository coinTransactionsRepo, 
             ICoinPurchaseRequestsService coinPurchaseRequestsService, 
             IWalletsService walletsService, 
             ICoinsService coinsService, 
-            ICoinSellOrdersService coinSellOrdersService)
+            ICoinSellOrdersService coinSellOrdersService,
+            IEmailService emailService)
         {
             _coinTransactionsRepo = coinTransactionsRepo;
             _coinsService = coinsService;
             _walletsService = walletsService;
             _coinPurchaseRequestsService = coinPurchaseRequestsService;
             _coinSellOrdersService = coinSellOrdersService;
+            _emailService = emailService;
         }
 
         public async Task<List<CoinTransaction>> GetSentCoinTransactionsAsync(Guid userId)
@@ -121,8 +124,22 @@ namespace MetaCoins.BLL.Services
 
             await _coinSellOrdersService.UpdateCoinSellOrderStatusAsync(
                 coinPurchaseRequest.CoinSellOrderId,
-                sellerWallet.UserId,
+                buyerWallet.UserId,
                 CoinSellOrderStatuses.Completed.ToString());
+            
+            // Sending an email about a accepted purchase request to the buyer
+            var buyerEmail = buyerWallet.User.Email;
+            var messageToBuyer = $"Dear {buyerWallet.User.UserName}. User with username '{sellerWallet.User.UserName}' has approved your purchase request with ID {coinPurchaseRequest.Id}.";
+            var subjectToBuyer = "Your purchase request is approved!";
+
+            await _emailService.SendEmailAsync(buyerEmail, subjectToBuyer, messageToBuyer);
+
+            // Sending an email about a successfull sale to the seller
+            var sellerEmail = sellerWallet.User.Email;
+            var messageToSeller = $"Dear {sellerWallet.User.UserName}. Your coin with ID {coin.Id} was successfully sold to the user with username '{buyerWallet.User.UserName}'.";
+            var subjectToSeller = "Your order to sale the coin has been successfully completed!";
+
+            await _emailService.SendEmailAsync(sellerEmail, subjectToSeller, messageToSeller);
         }
     }
 }
