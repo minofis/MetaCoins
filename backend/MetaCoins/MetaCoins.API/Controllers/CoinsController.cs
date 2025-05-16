@@ -31,7 +31,7 @@ namespace MetaCoins.API.Controllers
                     Items = paginatedCoins.Items.Select(i => new CoinResponseDto
                     {
                         Id = i.Id,
-                        ImageUrl = _imageService.GetPreSignedUrlAsync(i.ImageUrl),
+                        ImageUrl = _imageService.GetPreSignedUrl(i.ImageUrl),
                         Status = i.CoinStatus.Name,
                         Prompt = i.Prompt,
                         Title = i.Title,
@@ -59,7 +59,7 @@ namespace MetaCoins.API.Controllers
                 var coinDto = new CoinResponseDto
                     {
                         Id = coin.Id,
-                        ImageUrl = _imageService.GetPreSignedUrlAsync(coin.ImageUrl),
+                        ImageUrl = _imageService.GetPreSignedUrl(coin.ImageUrl),
                         Status = coin.CoinStatus.Name,
                         Prompt = coin.Prompt,
                         Title = coin.Title,
