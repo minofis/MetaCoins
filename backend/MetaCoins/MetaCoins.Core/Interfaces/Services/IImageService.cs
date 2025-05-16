@@ -6,5 +6,6 @@ namespace MetaCoins.Core.Interfaces.Services
         Task<string> GenerateImage();
         Task<byte[]> GetImageBytesAsync(string imageUrl);
         Task<string> UploadToAmazonS3Async(byte[] imageData, string fileName);
+        string GetPreSignedUrl(string fileName);
     }
 }

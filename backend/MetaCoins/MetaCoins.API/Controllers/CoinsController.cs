@@ -12,12 +12,12 @@ namespace MetaCoins.API.Controllers
     {
         private readonly IUsersService _usersService;
         private readonly ICoinsService _coinsService;
-        private readonly IConfiguration _config;
-        public CoinsController(IUsersService usersService, ICoinsService coinsService, IConfiguration config)
+        private readonly IImageService _imageService;
+        public CoinsController(IUsersService usersService, ICoinsService coinsService, IImageService imageService)
         {
             _usersService = usersService;
             _coinsService = coinsService;
-            _config = config;
+            _imageService = imageService;
         }
 
         [Authorize(Policy = "AdminOrCustomerPolicy")]
@@ -31,7 +31,7 @@ namespace MetaCoins.API.Controllers
                     Items = paginatedCoins.Items.Select(i => new CoinResponseDto
                     {
                         Id = i.Id,
-                        ImageUrl = _config["ApiUrl"] + i.ImageUrl,
+                        ImageUrl = _imageService.GetPreSignedUrlAsync(i.ImageUrl),
                         Status = i.CoinStatus.Name,
                         Prompt = i.Prompt,
                         Title = i.Title,
@@ -59,7 +59,7 @@ namespace MetaCoins.API.Controllers
                 var coinDto = new CoinResponseDto
                     {
                         Id = coin.Id,
-                        ImageUrl = _config["ApiUrl"] + coin.ImageUrl,
+                        ImageUrl = _imageService.GetPreSignedUrlAsync(coin.ImageUrl),
                         Status = coin.CoinStatus.Name,
                         Prompt = coin.Prompt,
                         Title = coin.Title,

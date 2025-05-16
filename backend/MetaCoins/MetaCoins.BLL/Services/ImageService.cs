@@ -11,10 +11,11 @@ namespace MetaCoins.BLL.Services
         private readonly IAmazonS3 _s3Client;
         private readonly HttpClient _httpClient;
         private readonly IOptions<S3Settings> _s3Settings;
-        public ImageService(HttpClient httpClient, IOptions<S3Settings> s3Settings)
+        public ImageService(HttpClient httpClient, IOptions<S3Settings> s3Settings, IAmazonS3 s3Client)
         {
             _httpClient = httpClient;
             _s3Settings = s3Settings;
+            _s3Client = s3Client;
         }
 
         public async Task<string> GenerateAndUploadImageAsync()
@@ -62,7 +63,22 @@ namespace MetaCoins.BLL.Services
 
             await _s3Client.PutObjectAsync(putRequest);
 
-            return $"https://{putRequest.BucketName}.s3.amazonaws.com/coin-images/{fileName}";
+            return fileName;
+        }
+
+        public string GetPreSignedUrl(string fileName)
+        {
+            var getRequest = new GetPreSignedUrlRequest
+            {
+                BucketName = _s3Settings.Value.BucketName,
+                Key = $"coin-images/{fileName}",
+                Verb = HttpVerb.GET,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
+
+            string preSignedUrl = _s3Client.GetPreSignedURL(getRequest);
+
+            return preSignedUrl;
         }
     }
 }
