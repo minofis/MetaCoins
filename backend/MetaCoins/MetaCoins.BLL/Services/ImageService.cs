@@ -1,42 +1,68 @@
+using Amazon.S3;
+using Amazon.S3.Model;
 using MetaCoins.Core.Interfaces.Services;
+using MetaCoins.DAL.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace MetaCoins.BLL.Services
 {
     public class ImageService : IImageService
     {
+        private readonly IAmazonS3 _s3Client;
         private readonly HttpClient _httpClient;
-        public ImageService(HttpClient httpClient)
+        private readonly IOptions<S3Settings> _s3Settings;
+        public ImageService(HttpClient httpClient, IOptions<S3Settings> s3Settings)
         {
             _httpClient = httpClient;
+            _s3Settings = s3Settings;
         }
+
+        public async Task<string> GenerateAndUploadImageAsync()
+        {
+            var imageUrl = await GenerateImage();
+
+            var imageBytes = await GetImageBytesAsync(imageUrl);
+
+            var key = Guid.NewGuid();
+
+            var fileName = $"coin-{key}";
+
+            var s3Url = await UploadToAmazonS3Async(imageBytes, fileName);
+
+            return s3Url;
+        }
+
         public async Task<string> GenerateImage()
         {
             var response = await _httpClient.GetAsync("https://picsum.photos/800/800");
 
-            var imageUrl = response.RequestMessage?.RequestUri?.ToString() ?? string.Empty;
+            var imageUrl = response.RequestMessage.RequestUri.ToString() ?? string.Empty;
 
-            var image = await _httpClient.GetAsync(imageUrl);
+            return imageUrl;
+        }
 
-            var imageBytes = await image.Content.ReadAsByteArrayAsync();
+        public async Task<byte[]> GetImageBytesAsync(string imageUrl)
+        {
+            var imageBytes = await _httpClient.GetByteArrayAsync(imageUrl);
 
-            var saveDirectory = "wwwroot/images";
-            
-            if (!Directory.Exists(saveDirectory))
+            return imageBytes;
+        }
+
+        public async Task<string> UploadToAmazonS3Async(byte[] imageData, string fileName)
+        {
+            using var stream = new MemoryStream(imageData);
+
+            var putRequest = new PutObjectRequest
             {
-                Directory.CreateDirectory(saveDirectory);
-            }
+                BucketName = _s3Settings.Value.BucketName,
+                Key = $"coin-images/{fileName}",
+                InputStream = stream,
+                ContentType = "image/jpeg"
+            };
 
-            var random = new Random();
-            
-            var coinNumber = random.Next();
+            await _s3Client.PutObjectAsync(putRequest);
 
-            var fileName = $"Coin{coinNumber}.jpg";
-
-            var filePath = Path.Combine(saveDirectory, fileName);
-
-            await File.WriteAllBytesAsync(filePath, imageBytes);
-
-            return $"images/{fileName}";
+            return $"https://{putRequest.BucketName}.s3.amazonaws.com/coin-images/{fileName}";
         }
     }
 }

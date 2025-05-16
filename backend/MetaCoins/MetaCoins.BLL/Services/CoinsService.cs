@@ -44,7 +44,7 @@ namespace MetaCoins.BLL.Services
             await _coinsRepo.CreateCoinOwnerRecordAsync(ownerRecord);
 
             coin.OwnershipRecords.Add(ownerRecord);
-            coin.ImageUrl = await _imageService.GenerateImage();
+            coin.ImageUrl = await _imageService.GenerateAndUploadImageAsync();
 
             await _coinsRepo.UpdateCoinAsync(coin);
         }
